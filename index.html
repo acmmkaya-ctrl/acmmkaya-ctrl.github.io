@@ -216,6 +216,31 @@ body::before{content:"";position:fixed;inset:0;
 .stat-label{font-size:7px;color:var(--muted);letter-spacing:1px}
 .stat-val{font-size:11px;font-weight:700;font-family:var(--hud)}
 
+/* PUMP TEYIT TABLOSU */
+#sec-tablo{overflow-x:auto}
+.pump-table{width:100%;border-collapse:collapse;font-size:9px;min-width:700px}
+.pump-table th{font-family:var(--hud);font-size:7px;letter-spacing:1px;color:var(--muted);
+  padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.08);text-align:center;white-space:nowrap;position:sticky;top:0;background:#020b14;z-index:2}
+.pump-table td{padding:6px 5px;border-bottom:1px solid rgba(255,255,255,.03);text-align:center;white-space:nowrap;cursor:pointer}
+.pump-table tr:hover td{background:rgba(16,185,129,.04)}
+.pump-table .coin-col{text-align:left;font-family:var(--hud);font-size:9px;font-weight:900;color:#e2e8f0;min-width:60px}
+.pump-table .price-col{color:#94a3b8;font-size:9px}
+.pump-table .score-col{font-family:var(--hud);font-weight:900;font-size:11px}
+.tc-yes{color:#10b981;font-size:13px}
+.tc-no{color:#ef4444;font-size:13px}
+.tc-warn{color:#f59e0b;font-size:13px}
+.tc-na{color:#334155;font-size:11px}
+.pump-ready{background:rgba(16,185,129,.06)!important}
+.pump-ready td{border-bottom:1px solid rgba(16,185,129,.1)!important}
+.teyit-bar{display:flex;align-items:center;gap:3px;justify-content:center}
+.teyit-dot{width:8px;height:8px;border-radius:50%}
+.table-legend{display:flex;gap:10px;padding:8px 12px;font-size:9px;color:var(--muted);flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.04)}
+.leg-item{display:flex;align-items:center;gap:4px}
+.sort-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:9px;font-family:var(--hud);letter-spacing:1px;padding:2px 4px}
+.sort-btn.active{color:var(--green)}
+.table-controls{display:flex;gap:6px;padding:8px 12px;align-items:center;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.04)}
+.tcount{font-size:9px;color:var(--muted);margin-left:auto}
+
 /* EMPTY */
 #empty{text-align:center;padding:60px 20px;position:relative;z-index:1}
 
@@ -315,6 +340,7 @@ footer{font-size:8px;color:#1a2a1e;text-align:center;padding:16px 12px;
   <button class="tbtn on" onclick="switchTab('alt')">🔥 NOKTA ATIŞI <span class="tcnt" id="tc-alt">0</span></button>
   <button class="tbtn" onclick="switchTab('major')">👑 MAJOR <span class="tcnt" id="tc-major">0</span></button>
   <button class="tbtn" onclick="switchTab('cat')">🎯 KATEGORİ FIRSAT <span class="tcnt" id="tc-cat">0</span></button>
+  <button class="tbtn" onclick="switchTab('tablo')">📊 PUMP TEYİT <span class="tcnt" id="tc-tablo">0</span></button>
 </div>
 
 <!-- SECTIONS -->
@@ -329,6 +355,59 @@ footer{font-size:8px;color:#1a2a1e;text-align:center;padding:16px 12px;
 <div class="sec" id="sec-cat">
   <div class="shdr" id="cat-hdr"><span style="font-size:16px">🎯</span><div><div class="shdr-title" id="cat-title">KATEGORİ FIRSATLARI</div><div class="shdr-sub" id="cat-sub"></div></div></div>
   <div class="ogrid" id="cat-grid"></div>
+</div>
+
+<!-- PUMP TEYİT TABLOSU -->
+<div class="sec" id="sec-tablo">
+  <div class="shdr">
+    <span style="font-size:16px">📊</span>
+    <div>
+      <div class="shdr-title" style="color:#f59e0b">PUMP TEYİT TABLOSU</div>
+      <div class="shdr-sub">Tüm coinler için gösterge teyit durumu · Yeşil satır = pump hazır</div>
+    </div>
+  </div>
+  <div class="table-legend">
+    <div class="leg-item"><span style="color:#10b981;font-size:14px">✅</span> Teyit var</div>
+    <div class="leg-item"><span style="color:#ef4444;font-size:14px">❌</span> Teyit yok</div>
+    <div class="leg-item"><span style="color:#f59e0b;font-size:14px">⚠️</span> Zayıf</div>
+    <div class="leg-item"><span style="color:#334155;font-size:11px">–</span> Veri yok</div>
+    <div class="leg-item" style="margin-left:auto"><span style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);padding:2px 6px;border-radius:4px;font-size:8px;color:#10b981">YEŞİL SATIR = PUMP HAZIR 🚀</span></div>
+  </div>
+  <div class="table-controls">
+    <span class="filter-label">SIRALA:</span>
+    <button class="sort-btn active" onclick="sortTable('score',this)">PUAN ↓</button>
+    <button class="sort-btn" onclick="sortTable('rsi',this)">RSI ↑</button>
+    <button class="sort-btn" onclick="sortTable('vs',this)">HACİM ↓</button>
+    <button class="sort-btn" onclick="sortTable('teyit',this)">TEYİT ↓</button>
+    <button class="sort-btn" onclick="sortTable('pct24h',this)">24s% ↓</button>
+    <span class="tcount" id="tablo-count"></span>
+  </div>
+  <div id="sec-tablo-inner" style="overflow-x:auto;position:relative;z-index:1">
+    <table class="pump-table" id="pump-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>COİN</th>
+          <th>FİYAT</th>
+          <th>24s%</th>
+          <th>PUAN</th>
+          <th>RSI<br/>&lt;40✅</th>
+          <th>VOL<br/>2x+✅</th>
+          <th>MACD<br/>+✅</th>
+          <th>OBV<br/>BİRİK✅</th>
+          <th>BB<br/>ALT✅</th>
+          <th>CVD<br/>+✅</th>
+          <th>SQZ<br/>💥✅</th>
+          <th>FR<br/>&lt;0✅</th>
+          <th>STOCH<br/>&lt;30✅</th>
+          <th>ATH<br/>DİP✅</th>
+          <th>TEYİT<br/>SAYISI</th>
+          <th>DURUM</th>
+        </tr>
+      </thead>
+      <tbody id="pump-tbody"></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- EMPTY -->
@@ -640,7 +719,7 @@ updateSession();setInterval(updateSession,60000);
 let activeFilter="all",activeTab="alt";
 function switchTab(t){
   activeTab=t;
-  document.querySelectorAll(".tbtn").forEach((b,i)=>b.className="tbtn"+(["alt","major","cat"][i]===t?" on":""));
+  document.querySelectorAll(".tbtn").forEach((b,i)=>b.className="tbtn"+(["alt","major","cat","tablo"][i]===t?" on":""));
   document.querySelectorAll(".sec").forEach(s=>s.classList.remove("on"));
   document.getElementById("sec-"+t).classList.add("on");
 }
@@ -784,6 +863,7 @@ async function runScan(){
     document.getElementById("tc-cat").textContent=opps.length;
   }
   document.getElementById("tab-bar").style.display="flex";
+  renderPumpTable(allResults);
 
   // Bildirim
   results.slice(0,3).forEach(sig=>{
@@ -976,6 +1056,104 @@ function switchEduTab(id,el){
   document.querySelectorAll(".edu-page").forEach(p=>p.classList.remove("on"));
   el.classList.add("on");
   document.getElementById("edu-"+id).classList.add("on");
+}
+
+/* ═══ PUMP TEYİT TABLOSU ══════════════════════════════════ */
+let tableData=[];
+let sortKey='score';
+let sortDir=-1;
+
+function renderPumpTable(data){
+  tableData=data;
+  document.getElementById("tc-tablo").textContent=data.length;
+  document.getElementById("tablo-count").textContent=data.length+" coin listeleniyor";
+  drawTable();
+}
+
+function drawTable(){
+  const sorted=[...tableData].sort((a,b)=>{
+    let av=a[sortKey]??-999, bv=b[sortKey]??-999;
+    if(sortKey==='teyit'){av=countTeyit(a);bv=countTeyit(b);}
+    if(sortKey==='rsi'){av=a.ri??999;bv=b.ri??999;return(av-bv);}
+    return(bv-av)*sortDir;
+  });
+  const tbody=document.getElementById("pump-tbody");
+  tbody.innerHTML=sorted.map((sig,i)=>{
+    const ct=countTeyit(sig);
+    const pumpReady=ct>=7;
+    function tf(cond,weak){
+      if(cond===null||cond===undefined)return`<span class="tc-na">–</span>`;
+      if(cond===true)return`<span class="tc-yes">✅</span>`;
+      if(weak)return`<span class="tc-warn">⚠️</span>`;
+      return`<span class="tc-no">❌</span>`;
+    }
+    const rsiOk=sig.ri!==null?(sig.ri<40?true:sig.ri<50?'weak':false):null;
+    const volOk=sig.vs>=2?true:sig.vs>=1.5?'weak':false;
+    const macdOk=sig.mc!==null?(sig.mc>0?true:false):null;
+    const obvOk=sig.ob?(sig.ob.trend==="accumulation"?true:sig.ob.trend==="neutral"?'weak':false):null;
+    const bbOk=sig.bnd&&sig.price?(()=>{const r=sig.bnd.upper-sig.bnd.lower;if(r<=0)return false;const p=(sig.price-sig.bnd.lower)/r;return p<0.30?true:p<0.50?'weak':false;})():null;
+    const cvdOk=sig.cv>10?true:sig.cv>0?'weak':false;
+    const sqzOk=sig.sq?(sig.sq.squeezed?true:false):null;
+    const frOk=sig.fr!==null?(sig.fr<-0.005?true:sig.fr<0?'weak':false):null;
+    const stOk=sig.st!==null?(sig.st<30?true:sig.st<45?'weak':false):null;
+    const athOk=sig.athD!==null?(sig.athD<-50?true:sig.athD<-30?'weak':false):null;
+    const chgC=sig.pct24h>=0?"#10b981":"#ef4444";
+    const sc=scColor(sig.score);
+    const durum=pumpReady?
+      `<span style="color:#10b981;font-family:var(--hud);font-size:8px;letter-spacing:1px">🚀 HAZIR</span>`:
+      ct>=5?`<span style="color:#f59e0b;font-family:var(--hud);font-size:8px">⏳ YAKLAŞIYOR</span>`:
+      `<span style="color:#475569;font-size:8px">📊 İZLE</span>`;
+    return`<tr class="${pumpReady?'pump-ready':''}" onclick="showAnalysis('${san(sig.sym)}')">
+      <td style="color:var(--muted);font-size:8px">${i+1}</td>
+      <td class="coin-col">
+        <div>${san(sig.name)}</div>
+        <div style="font-size:7px;color:var(--muted)">${(CM[sig.category]||CM.Other).i} ${(CM[sig.category]||CM.Other).l}</div>
+      </td>
+      <td class="price-col">${fU(sig.price)}</td>
+      <td style="color:${chgC};font-weight:700">${sig.pct24h>=0?"+":""}${sig.pct24h?.toFixed(1)}%</td>
+      <td class="score-col" style="color:${sc}">${sig.score}</td>
+      <td>${tf(rsiOk===true?true:rsiOk===false?false:null,rsiOk==='weak')}<br/><span style="font-size:7px;color:var(--muted)">${sig.ri??'–'}</span></td>
+      <td>${tf(volOk===true?true:volOk===false?false:null,volOk==='weak')}<br/><span style="font-size:7px;color:var(--muted)">${sig.vs}x</span></td>
+      <td>${tf(macdOk)}</td>
+      <td>${tf(obvOk===true?true:obvOk===false?false:null,obvOk==='weak')}</td>
+      <td>${tf(bbOk===true?true:bbOk===false?false:null,bbOk==='weak')}</td>
+      <td>${tf(cvdOk===true?true:cvdOk===false?false:null,cvdOk==='weak')}<br/><span style="font-size:7px;color:var(--muted)">${sig.cv>0?"+":""}${sig.cv}%</span></td>
+      <td>${tf(sqzOk)}</td>
+      <td>${tf(frOk===true?true:frOk===false?false:null,frOk==='weak')}<br/><span style="font-size:7px;color:var(--muted)">${sig.fr!==null?(sig.fr*100).toFixed(3)+"%":"–"}</span></td>
+      <td>${tf(stOk===true?true:stOk===false?false:null,stOk==='weak')}<br/><span style="font-size:7px;color:var(--muted)">${sig.st??'–'}</span></td>
+      <td>${tf(athOk===true?true:athOk===false?false:null,athOk==='weak')}<br/><span style="font-size:7px;color:var(--muted)">${sig.athD??'–'}%</span></td>
+      <td>
+        <div style="font-family:var(--hud);font-size:12px;font-weight:900;color:${ct>=7?"#10b981":ct>=5?"#f59e0b":"#475569"}">${ct}/10</div>
+        <div style="display:flex;gap:1px;justify-content:center;margin-top:2px">
+          ${[rsiOk,volOk,macdOk,obvOk,bbOk,cvdOk,sqzOk,frOk,stOk,athOk].map(v=>`<div style="width:5px;height:5px;border-radius:1px;background:${v===true?"#10b981":v==='weak'?"#f59e0b":v===false?"#ef4444":"#1e293b"}"></div>`).join("")}
+        </div>
+      </td>
+      <td>${durum}</td>
+    </tr>`;
+  }).join("");
+}
+
+function countTeyit(sig){
+  let c=0;
+  if(sig.ri!==null&&sig.ri<40)c++;
+  if(sig.vs>=2)c++;
+  if(sig.mc!==null&&sig.mc>0)c++;
+  if(sig.ob&&sig.ob.trend==="accumulation")c++;
+  if(sig.bnd&&sig.price){const r=sig.bnd.upper-sig.bnd.lower;if(r>0&&(sig.price-sig.bnd.lower)/r<0.30)c++;}
+  if(sig.cv>10)c++;
+  if(sig.sq&&sig.sq.squeezed)c++;
+  if(sig.fr!==null&&sig.fr<-0.005)c++;
+  if(sig.st!==null&&sig.st<30)c++;
+  if(sig.athD!==null&&sig.athD<-50)c++;
+  return c;
+}
+
+function sortTable(key,el){
+  if(sortKey===key)sortDir*=-1;
+  else{sortKey=key;sortDir=-1;}
+  document.querySelectorAll(".sort-btn").forEach(b=>b.classList.remove("active"));
+  el.classList.add("active");
+  drawTable();
 }
 
 // Modal dışına tıkla kapat
