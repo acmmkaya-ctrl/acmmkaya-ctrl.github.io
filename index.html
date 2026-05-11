@@ -852,87 +852,86 @@ async function manualAnalyze(){
   if(!name){result.style.display="none";return;}
   const sym=name+"USDT";
   result.style.display="block";
-  result.innerHTML=`<div style="font-size:10px;color:var(--muted);padding:10px;text-align:center"><span class="spinner" style="display:inline-block;margin-right:6px"></span>${name} analiz ediliyor...</div>`;
-  // Ticker verisi al
-  const tm=await fetchTicker();
-  if(!tm||!tm[sym]){
-    result.innerHTML=`<div style="font-size:10px;color:var(--red);padding:10px;background:rgba(239,68,68,.05);border-radius:8px;border:1px solid rgba(239,68,68,.15)">
-      ❌ <b>${name}USDT</b> Binance'de bulunamadı. Coin adını kontrol edin.
-    </div>`;
-    return;
-  }
-  const sig=await analyzeCoin(sym,tm);
-  if(!sig){
-    const t=tm[sym];
-    const pct=safeN(t.priceChangePercent);
-    const vol=safeN(t.quoteVolume);
-    result.innerHTML=`<div style="font-size:10px;color:var(--yellow);padding:10px;background:rgba(245,158,11,.05);border-radius:8px;border:1px solid rgba(245,158,11,.15)">
-      ⚠️ <b>${name}</b> — Yeterli sinyal yok (puan &lt;25)<br/>
-      <span style="color:var(--muted)">24s: ${pct>=0?"+":""}${pct.toFixed(2)}% · Hacim: $${(vol/1000000).toFixed(1)}M</span>
-    </div>`;
-    return;
-  }
-  // Pump hazırlık skoru hesapla
-  const{ps,pr}=pumpReadinessScore(sig);
-  const sc=scColor(sig.score);
-  const pc=ps>=75?"#6366f1":ps>=55?"#f59e0b":"#3b82f6";
-  // Sahte giriş
-  const fakeWarn=sig.isFakeEntry?`<div style="font-size:9px;color:var(--red);padding:6px 8px;background:rgba(239,68,68,.08);border-radius:6px;margin-bottom:8px;border:1px solid rgba(239,68,68,.2)">
-    🚫 <b>SAHTEGİRİŞ UYARISI</b> — ${sig.fakeEntryReasons.join(" · ")}
-  </div>`:"";
-  // Pump durumu metni
-  const pumpStatus=ps>=75?"🚀 PUMP ÇOK YAKIN — Giriş yapılabilir":ps>=55?"⚡ PUMP HAZIRLANIYOR — Takipte kal":ps>=35?"⏳ ERKEN AŞAMA — İzle, henüz erken":"📊 PUMP HAZIR DEĞİL — Bekle";
-  const pumpColor=ps>=75?"#10b981":ps>=55?"#6366f1":ps>=35?"#f59e0b":"#475569";
-  result.innerHTML=`
-  <div style="background:rgba(7,16,32,.98);border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:12px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-      <div>
-        <div style="font-family:var(--hud);font-size:16px;font-weight:900;color:#e2e8f0">${san(sig.name)}</div>
-        <div style="font-size:10px;color:var(--muted)">${fU(sig.price)} · ${sig.pct24h>=0?"+":""}${sig.pct24h?.toFixed(2)}% 24s</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-family:var(--hud);font-size:22px;font-weight:900;color:${sc}">${sig.score}</div>
-        <div style="font-size:7px;color:var(--muted)">GENEL PUAN</div>
-      </div>
-    </div>
-    ${fakeWarn}
-    <div style="background:${pumpColor}15;border:1px solid ${pumpColor}40;border-radius:8px;padding:8px 10px;margin-bottom:10px">
-      <div style="font-family:var(--hud);font-size:10px;font-weight:900;color:${pumpColor}">${pumpStatus}</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
-        <div style="flex:1;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden">
-          <div style="height:100%;width:${ps}%;background:${pc};border-radius:3px"></div>
+  result.innerHTML=`<div style="font-size:10px;color:var(--muted);padding:12px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px"><span class="spinner"></span>${name} analiz ediliyor...</div>`;
+  try{
+    // Sadece bu coin için ticker çek
+    const td=await sf(`https://api.binance.com/api/v3/ticker/24hr?symbol=${encodeURIComponent(sym)}`);
+    if(!td||td.code){
+      result.innerHTML=`<div style="font-size:10px;color:var(--red);padding:10px;background:rgba(239,68,68,.05);border-radius:8px;border:1px solid rgba(239,68,68,.15)">
+        ❌ <b>${san(name)}USDT</b> Binance'de bulunamadı. Coin adını kontrol edin.
+      </div>`;
+      return;
+    }
+    const tm={[sym]:td};
+    const sig=await analyzeCoin(sym,tm);
+    if(!sig){
+      const pct=safeN(td.priceChangePercent);
+      const vol=safeN(td.quoteVolume);
+      result.innerHTML=`<div style="font-size:10px;color:var(--yellow);padding:10px;background:rgba(245,158,11,.05);border-radius:8px;border:1px solid rgba(245,158,11,.15)">
+        ⚠️ <b>${san(name)}</b> — Yeterli sinyal yok (puan &lt;25)<br/>
+        <span style="color:var(--muted)">Fiyat: $${fmtP(safeN(td.lastPrice))} · 24s: ${pct>=0?"+":""}${pct.toFixed(2)}% · Hacim: $${(vol/1000000).toFixed(1)}M</span>
+      </div>`;
+      return;
+    }
+    const{ps,pr}=pumpReadinessScore(sig);
+    const sc=scColor(sig.score);
+    const pc=ps>=75?"#6366f1":ps>=55?"#f59e0b":"#3b82f6";
+    const fakeWarn=sig.isFakeEntry?`<div style="font-size:9px;color:var(--red);padding:6px 8px;background:rgba(239,68,68,.08);border-radius:6px;margin-bottom:8px;border:1px solid rgba(239,68,68,.2)">
+      🚫 <b>SAHTEGİRİŞ UYARISI</b><br/>${sig.fakeEntryReasons.map(r=>`▶ ${san(r)}`).join("<br/>")}
+    </div>`:"";
+    const pumpStatus=ps>=75?"🚀 PUMP ÇOK YAKIN — Giriş yapılabilir":ps>=55?"⚡ PUMP HAZIRLANIYOR — Takipte kal":ps>=35?"⏳ ERKEN AŞAMA — İzle, henüz erken":"📊 PUMP HAZIR DEĞİL — Bekle";
+    const pumpColor=ps>=75?"#10b981":ps>=55?"#6366f1":ps>=35?"#f59e0b":"#475569";
+    result.innerHTML=`
+    <div style="background:rgba(7,16,32,.98);border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--hud);font-size:16px;font-weight:900;color:#e2e8f0">${san(sig.name)}</div>
+          <div style="font-size:10px;color:var(--muted)">${fU(sig.price)} · ${sig.pct24h>=0?"+":""}${sig.pct24h?.toFixed(2)}% 24s</div>
         </div>
-        <span style="font-family:var(--hud);font-size:12px;font-weight:900;color:${pc}">${ps}/100</span>
+        <div style="text-align:right">
+          <div style="font-family:var(--hud);font-size:22px;font-weight:900;color:${sc}">${sig.score}</div>
+          <div style="font-size:7px;color:var(--muted)">GENEL PUAN</div>
+        </div>
       </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
-      <div style="background:rgba(255,255,255,.02);border-radius:6px;padding:7px">
-        <div style="font-size:7px;color:var(--muted);margin-bottom:4px">PUMP HAZIRLIK NEDENLERİ</div>
-        ${pr.map(r=>`<div style="font-size:9px;color:#94a3b8;padding:2px 0">⚡ ${san(r)}</div>`).join("")}
+      ${fakeWarn}
+      <div style="background:${pumpColor}18;border:1px solid ${pumpColor}40;border-radius:8px;padding:8px 10px;margin-bottom:10px">
+        <div style="font-family:var(--hud);font-size:9px;font-weight:900;color:${pumpColor}">${pumpStatus}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+          <div style="flex:1;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${ps}%;background:${pc};border-radius:3px;transition:width .5s"></div>
+          </div>
+          <span style="font-family:var(--hud);font-size:12px;font-weight:900;color:${pc}">${ps}/100</span>
+        </div>
       </div>
-      <div style="background:rgba(255,255,255,.02);border-radius:6px;padding:7px">
-        <div style="font-size:7px;color:var(--muted);margin-bottom:4px">GÖSTERGELER</div>
-        ${sig.ri!==null?`<div style="font-size:9px;padding:2px 0;color:${sig.ri<40?"#10b981":sig.ri>70?"#ef4444":"#f59e0b"}">RSI: ${sig.ri}</div>`:""}
-        <div style="font-size:9px;padding:2px 0;color:${sig.vs>=2?"#10b981":"#64748b"}">Hacim: ${sig.vs}x</div>
-        ${sig.ob?`<div style="font-size:9px;padding:2px 0;color:${sig.ob.trend==="accumulation"?"#10b981":"#ef4444"}">OBV: ${sig.ob.trend==="accumulation"?"Birikim 🐋":"Dağıtım"}</div>`:""}
-        ${sig.sq?.squeezed?`<div style="font-size:9px;padding:2px 0;color:#f59e0b">Squeeze: BASKIDA 💥</div>`:""}
-        ${sig.fr!==null?`<div style="font-size:9px;padding:2px 0;color:${sig.fr<0?"#10b981":"#64748b"}">FR: ${(sig.fr*100).toFixed(3)}%</div>`:""}
-        ${sig.wScore>0?`<div style="font-size:9px;padding:2px 0;color:#6366f1">Whale: +${sig.wScore} 🐳</div>`:""}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+        <div style="background:rgba(255,255,255,.02);border-radius:6px;padding:7px">
+          <div style="font-size:7px;color:var(--muted);margin-bottom:4px;font-family:var(--hud);letter-spacing:1px">PUMP HAZIRLIK</div>
+          ${pr.length>0?pr.map(r=>`<div style="font-size:9px;color:#94a3b8;padding:2px 0">⚡ ${san(r)}</div>`).join(""):`<div style="font-size:9px;color:var(--muted)">Henüz sinyal yok</div>`}
+        </div>
+        <div style="background:rgba(255,255,255,.02);border-radius:6px;padding:7px">
+          <div style="font-size:7px;color:var(--muted);margin-bottom:4px;font-family:var(--hud);letter-spacing:1px">GÖSTERGELER</div>
+          ${sig.ri!==null?`<div style="font-size:9px;padding:2px 0;color:${sig.ri<40?"#10b981":sig.ri>70?"#ef4444":"#f59e0b"}">RSI: ${sig.ri}</div>`:""}
+          <div style="font-size:9px;padding:2px 0;color:${sig.vs>=2?"#10b981":"#64748b"}">Hacim: ${sig.vs}x</div>
+          ${sig.ob?`<div style="font-size:9px;padding:2px 0;color:${sig.ob.trend==="accumulation"?"#10b981":"#ef4444"}">OBV: ${sig.ob.trend==="accumulation"?"Birikim 🐋":"Dağıtım"}</div>`:""}
+          ${sig.sq?.squeezed?`<div style="font-size:9px;padding:2px 0;color:#f59e0b">Squeeze: BASKIDA 💥</div>`:""}
+          ${sig.mc!==null?`<div style="font-size:9px;padding:2px 0;color:${sig.mc>0?"#10b981":"#ef4444"}">MACD: ${sig.mc>0?"▲ Pozitif":"▼ Negatif"}</div>`:""}
+          ${sig.fr!==null?`<div style="font-size:9px;padding:2px 0;color:${sig.fr<0?"#10b981":"#64748b"}">FR: ${(sig.fr*100).toFixed(3)}%</div>`:""}
+          ${sig.wScore>0?`<div style="font-size:9px;padding:2px 0;color:#6366f1">🐋 Whale: +${sig.wScore}</div>`:""}
+        </div>
       </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;background:rgba(255,255,255,.02);border-radius:7px;padding:8px">
-      <div style="text-align:center"><div style="font-size:7px;color:var(--muted)">🟢 GİRİŞ</div><div style="font-size:10px;font-weight:700;color:#94a3b8">${fU(sig.price)}</div></div>
-      <div style="text-align:center"><div style="font-size:7px;color:var(--muted)">🎯 HEDEF 1</div><div style="font-size:10px;font-weight:700;color:#10b981">${fU(sig.t1)}</div></div>
-      <div style="text-align:center"><div style="font-size:7px;color:var(--muted)">🔴 STOP</div><div style="font-size:10px;font-weight:700;color:#ef4444">${fU(sig.stop)}</div></div>
-    </div>
-    <div style="margin-top:8px;text-align:center">
-      <button onclick="showAnalysis('${san(sig.sym)}')" style="padding:6px 16px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:6px;color:#6366f1;font-family:var(--hud);font-size:8px;cursor:pointer">
-        📊 TAM AI ANALİZİ GÖRÜNTÜLE
-      </button>
-    </div>
-  </div>`;
-  // Eğer allResults'te yoksa ekle (modal için)
-  if(!allResults.find(s=>s.sym===sym))allResults.push(sig);
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;background:rgba(255,255,255,.02);border-radius:7px;padding:8px;margin-bottom:8px">
+        <div style="text-align:center"><div style="font-size:7px;color:var(--muted)">🟢 GİRİŞ</div><div style="font-size:10px;font-weight:700;color:#94a3b8">${fU(sig.price)}</div></div>
+        <div style="text-align:center"><div style="font-size:7px;color:var(--muted)">🎯 HEDEF 1</div><div style="font-size:10px;font-weight:700;color:#10b981">${fU(sig.t1)}</div></div>
+        <div style="text-align:center"><div style="font-size:7px;color:var(--muted)">🔴 STOP</div><div style="font-size:10px;font-weight:700;color:#ef4444">${fU(sig.stop)}</div></div>
+      </div>
+      ${sig.reasons.length>0?`<div style="font-size:8px;color:var(--muted);padding:6px 0">${sig.reasons.slice(0,3).map(r=>`▶ ${san(r)}`).join("<br/>")}</div>`:""}
+    </div>`;
+    if(!allResults.find(s=>s.sym===sym))allResults.push(sig);
+  }catch(err){
+    result.innerHTML=`<div style="font-size:10px;color:var(--red);padding:10px;background:rgba(239,68,68,.05);border-radius:8px;border:1px solid rgba(239,68,68,.15)">
+      ❌ Analiz hatası: ${san(String(err.message||err))}
+    </div>`;
+  }
 }
 function setFilter(f,el){
   activeFilter=f;
