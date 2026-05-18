@@ -2490,8 +2490,7 @@ function renderAiAnaliz(a, sym, tf) {
 
   // Yorum
   document.getElementById('ai-yorum').innerHTML =
-    (a.sistem_yorumu || '').replace(/
-/g, '<br>');
+    (a.sistem_yorumu || '').split('\n').join('<br>');
 
   // Uclu senkron
   if (a.uclu_senkron) {
@@ -2691,7 +2690,7 @@ function renderBistAi(a, sembol) {
   }
 
   // Yorum
-  let yorumHtml = (a.sistem_yorumu || '').replace(/\n/g, '<br>');
+  let yorumHtml = (a.sistem_yorumu || '').split('\n').join('<br>');
 
   // Uyarilar
   if (a.uyarilar && a.uyarilar.length > 0) {
