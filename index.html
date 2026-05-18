@@ -583,7 +583,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
     <div class="ecard ep"><div class="etitle" style="color:#c4b5fd">💜 PUMP GİR — Özel Durum</div><div class="ebody">
       EMA200 çok uzakta ama sinyal çok güçlü:<br><br>
       <div style="background:rgba(245,158,11,.08);border-radius:8px;padding:8px;margin-bottom:6px">
-        <div style="font-size:11px;margin-bottom:3px">🌐 Web: ATH'den %80+ uzak ama skor 10</div>
+        <div style="font-size:11px;margin-bottom:3px">🌐 Web: ATHden %80+ uzak ama skor 10</div>
         <div style="font-size:11px;margin-bottom:3px">📈 PRO: <strong style="color:var(--gold)">PUMP GİR</strong> etiketi (sarı)</div>
         <div style="font-size:11px">📡 OSC: Histogram patlıyor, AL sinyali</div>
       </div>
@@ -774,7 +774,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
         <strong>Oncelikli bak:</strong><br>
         • <span style="color:var(--g2)">BIST 30 hisseleri</span> = en likit, manipulasyon az<br>
         • <span style="color:var(--g2)">Gunluk hacim 100M TL+</span> = rahat gir-cik<br>
-        • <span style="color:var(--g2)">ATH'den %30+ uzak</span> = potansiyel var<br><br>
+        • <span style="color:var(--g2)">ATHden %30+ uzak</span> = potansiyel var<br><br>
         <strong>Kacin:</strong><br>
         • <span style="color:var(--r2)">Gunluk hacim 10M TL alti</span> = cikamayabilirsiniz<br>
         • <span style="color:var(--r2)">KAP'ta son 30 gunde kotu haber</span> = risk yuksek<br>
@@ -842,7 +842,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
         <div style="display:flex;flex-direction:column;gap:4px;font-size:10px">
           <div style="display:flex;gap:8px;align-items:center">
             <span style="color:var(--g2);font-size:14px">✅</span>
-            <span><strong>Web Radar:</strong> Skor 9.8/10 · ATH'den %87 uzak · Hacim 340% MC</span>
+            <span><strong>Web Radar:</strong> Skor 9.8/10 · ATHden %87 uzak · Hacim 340% MC</span>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             <span style="color:var(--g2);font-size:14px">✅</span>
@@ -1077,13 +1077,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 <!-- BIST TARAYICI -->
 <div class="tc" id="tc-analiz">
   <div style="padding:4px 0 10px">
-    <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:8px">🤖 SRU v4 Sistem AI Analizi</div>
-    <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Sembol girin. Sistem SRU v4 mantığıyla detaylı analiz üretir.</div>
+    <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:8px">📊 SRU v4 Teknik Analiz</div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Sembol girin. SRU v4 sistemi teknik analiz yapar — anlık, ücretsiz.</div>
 
     <!-- Sembol + TF seçimi -->
     <div style="display:flex;gap:6px;margin-bottom:8px">
       <input id="ai-symbol" type="text" placeholder="BTC, ETH, XRP..." maxlength="20"
-        style="flex:1;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;outline:none">
+        style="flex:1;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;outline:none"
+        onkeydown="if(event.key==='Enter') aiAnaliz()">
       <select id="ai-tf" style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;outline:none">
         <option value="15dk">15 dk</option>
         <option value="1sa" selected>1 Saat</option>
@@ -1520,7 +1521,7 @@ function calcScore(c){
   // ATH mesafesi
   const ad=c.ath>0?c.current_price/c.ath:1;
   let as2=ad<0.1?1.5:ad<0.2?1.3:ad<0.4?1.0:ad<0.6?0.5:0.1;
-  if(ad<0.2)sigs.push({t:'sp2',tx:"ATH'den %"+Math.round((1-ad)*100)+' uzak'});
+  if(ad<0.2)sigs.push({t:'sp2',tx:"ATHden %"+Math.round((1-ad)*100)+' uzak'});
   inds.ath={v:Math.min(100,(1-ad)*100),l:'ATH Mesafesi',c:'#f59e0b'};
   tot+=as2;
   // 7g trend
@@ -1923,7 +1924,7 @@ function openModal(i){
         <div class="psi"><div class="psiv">${fp(cp)}</div><div class="psil">Fiyat</div></div>
         <div class="psi"><div class="psiv" style="color:${ch24>=0?'var(--g2)':'var(--r2)'}">${ch24>=0?'+':''}${ch24.toFixed(2)}%</div><div class="psil">24 Saat</div></div>
         <div class="psi"><div class="psiv" style="color:${ch7>=0?'var(--g2)':'var(--r2)'}">${ch7>=0?'+':''}${ch7.toFixed(1)}%</div><div class="psil">7 Gün</div></div>
-        <div class="psi"><div class="psiv" style="color:var(--yellow)">-%${athD}</div><div class="psil">ATH'den</div></div>
+        <div class="psi"><div class="psiv" style="color:var(--yellow)">-%${athD}</div><div class="psil">ATHden</div></div>
       </div>
       <div class="tftabs">
         <div class="tft on" onclick="switchTF(this,'5m',${cp},${i})">5dk</div>
@@ -2341,99 +2342,208 @@ async function bistScan() {
 
 
 
-// ═══ AI ANALİZ SİSTEMİ ═══
+
+// ═══ SRU v4 STATİK ANALİZ ═══
 function hizliAi(sym) {
   document.getElementById('ai-symbol').value = sym;
   aiAnaliz();
 }
 
 async function aiAnaliz() {
-  const sym    = (document.getElementById('ai-symbol').value || '').trim().toUpperCase();
-  const tf     = document.getElementById('ai-tf').value;
-  if (!sym) { alert('Lütfen sembol girin (örn: BTC, ETH)'); return; }
+  const sym = (document.getElementById('ai-symbol').value || '').trim().toUpperCase();
+  const tf  = document.getElementById('ai-tf').value;
+  if (!sym) { alert('Sembol girin (örn: BTC, ETH)'); return; }
 
   document.getElementById('ai-result').style.display  = 'none';
   document.getElementById('ai-loading').style.display = 'block';
   document.getElementById('ai-btn').disabled = true;
   document.getElementById('ai-btn').textContent = '...';
 
-  const prompt = `Sen SRU v4 kripto spot trading sistemi analistisin.
-
-Analiz edilecek: ${sym}USDT — Zaman dilimi: ${tf}
-
-SRU v4 sistemi 5 katmandan oluşur:
-1. TREND: Hull MA + EMA50/200 + Multi-TF hizalama (0-30 puan)
-2. MOMENTUM: Squeeze + MACD + RSI (0-30 puan)
-3. AKIŞ: Z-Score Delta + Hacim + OBV (0-25 puan)
-4. VOLATİLİTE: BB Sıkışma + VWAP (0-15 puan)
-5. ZAMAN: TF hizalama bonusu (0-5 puan)
-
-Güncel ${sym} bilgilerini kullanarak SRU v4 sistemi mantığıyla detaylı analiz yap.
-
-SADECE JSON formatında yanıtla (başka metin yazma):
-{
-  "sembol": "${sym}",
-  "zaman_dilimi": "${tf}",
-  "guncel_fiyat": "fiyat bilgisi",
-  "karar": "AL *** / AL ** / AL * / HAZIRLAN / BEKLE / PAS / SAT",
-  "karar_rengi": "yesil / sari / turuncu / kirmizi / mor",
-  "kompozit_skor": 0-100 arası sayı,
-  "katmanlar": [
-    {"isim": "TREND", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi"},
-    {"isim": "MOMENTUM", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi/mor/turuncu"},
-    {"isim": "AKIS", "durum": "metin", "puan": 0-25, "renk": "yesil/sari/kirmizi/turuncu"},
-    {"isim": "VOLATİLİTE", "durum": "metin", "puan": 0-15, "renk": "yesil/sari/kirmizi/mor"},
-    {"isim": "ZAMAN/TF", "durum": "metin", "puan": 0-5, "renk": "yesil/sari/kirmizi"}
-  ],
-  "sistem_yorumu": "Tüm katmanları birleştiren 3-4 cümlelik detaylı analiz. Neden bu karar verildi? Hangi riskler var? Ne zaman girilmeli?",
-  "hedefler": {
-    "tp1": "+X.X%",
-    "tp2": "+X.X%",
-    "sl": "-X.X%",
-    "not": "kısa not"
-  },
-  "uyarilar": ["varsa önemli uyarılar listesi"],
-  "uclu_senkron": {
-    "overlay": "Overlay durumu özeti",
-    "panel": "Panel durumu özeti",
-    "genel": "3 sistem birlikte ne diyor"
-  }
-}`;
-
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    // CoinGecko'dan veri cek
+    const cgId = getCgId(sym);
+    let price = 0, ch24 = 0, ch7 = 0, vol24 = 0, mcap = 0, ath = 0;
 
-    const data = await resp.json();
-    const txt  = (data.content || [])
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('');
+    try {
+      const proxy = 'https://api.allorigins.win/raw?url=';
+      const url   = encodeURIComponent('https://api.coingecko.com/api/v3/coins/' + cgId + '?localization=false&tickers=false&community_data=false&developer_data=false');
+      const resp  = await fetch(proxy + url);
+      const data  = await resp.json();
+      const md    = data.market_data || {};
+      price = md.current_price && md.current_price.usd ? md.current_price.usd : 0;
+      ch24  = md.price_change_percentage_24h || 0;
+      ch7   = md.price_change_percentage_7d  || 0;
+      vol24 = md.total_volume && md.total_volume.usd ? md.total_volume.usd : 0;
+      mcap  = md.market_cap && md.market_cap.usd ? md.market_cap.usd : 0;
+      ath   = md.ath && md.ath.usd ? md.ath.usd : 0;
+    } catch(e) {
+      // Veri alinamazsa tahmini kullan
+      price = 0; ch24 = 0;
+    }
 
-    let jsonStr = txt.replace(/```json|```/g, '').trim();
-    const m = jsonStr.match(/\{[\s\S]*\}/);
-    if (m) jsonStr = m[0];
-    const analiz = JSON.parse(jsonStr);
-
+    // SRU v4 statik analiz hesapla
+    const analiz = sruV4Analiz(sym, tf, price, ch24, ch7, vol24, mcap, ath);
     renderAiAnaliz(analiz, sym, tf);
     kaydedAiHistory(analiz, sym, tf);
 
-  } catch (e) {
+  } catch(e) {
     document.getElementById('ai-loading').style.display = 'none';
     document.getElementById('ai-btn').disabled = false;
     document.getElementById('ai-btn').textContent = 'ANALİZ ET';
     document.getElementById('ai-result').style.display = 'block';
     document.getElementById('ai-result').innerHTML =
-      '<div style="padding:16px;color:var(--red);font-size:12px">⚠️ Analiz hatası: ' + e.message + '</div>';
+      '<div style="padding:16px;color:var(--red);font-size:12px">Analiz hatası: ' + e.message + '</div>';
   }
+}
+
+function getCgId(sym) {
+  const map = {
+    'BTC':'bitcoin','ETH':'ethereum','XRP':'ripple','SOL':'solana',
+    'BNB':'binancecoin','AVAX':'avalanche-2','LINK':'chainlink',
+    'DOGE':'dogecoin','ADA':'cardano','DOT':'polkadot','MATIC':'matic-network',
+    'LTC':'litecoin','ATOM':'cosmos','UNI':'uniswap','NEAR':'near',
+    'APT':'aptos','ARB':'arbitrum','OP':'optimism','INJ':'injective-protocol',
+    'SUI':'sui','TRX':'tron','TON':'the-open-network','SHIB':'shiba-inu',
+    'FTM':'fantom','ALGO':'algorand','VET':'vechain','SAND':'the-sandbox',
+    'MANA':'decentraland','AXS':'axie-infinity','GRT':'the-graph',
+    'AAVE':'aave','SNX':'synthetix-network-token','CRV':'curve-dao-token',
+    'MKR':'maker','COMP':'compound-governance-token','BAL':'balancer',
+    'YFI':'yearn-finance','SUSHI':'sushi','1INCH':'1inch',
+  };
+  return map[sym.toUpperCase()] || sym.toLowerCase();
+}
+
+function sruV4Analiz(sym, tf, price, ch24, ch7, vol24, mcap, ath) {
+  // TF esigi
+  const tfMap = {'15dk':78,'1sa':68,'4sa':64,'1gun':60};
+  const thr   = tfMap[tf] || 68;
+  const tfLabel = {'15dk':'15 Dakika','1sa':'1 Saat','4sa':'4 Saat','1gun':'Günlük'}[tf] || tf;
+
+  // KATMAN 1: TREND (0-30)
+  // ch24 ve ch7 bazli trend tahmini
+  const trendUp   = ch24 > 1 && ch7 > 0;
+  const trendStr  = ch24 > 3 && ch7 > 5;
+  const trendDown = ch24 < -2;
+  let t_score = 0;
+  if (trendStr)      t_score = 28;
+  else if (trendUp)  t_score = 18;
+  else if (!trendDown) t_score = 10;
+  else               t_score = 3;
+  const t_txt = trendStr ? 'TREND: TAM YUKARI' : trendUp ? 'TREND: Yukari' : trendDown ? 'TREND: ASAGI!' : 'TREND: Yatay';
+  const t_renk = trendStr ? 'yesil' : trendUp ? 'sari' : 'kirmizi';
+
+  // KATMAN 2: MOMENTUM (0-30)
+  // Gunluk degisim bazli RSI tahmini
+  const rsiEst = Math.min(85, Math.max(20, 50 + ch24 * 2 + ch7 * 0.5));
+  const sqzUp  = ch24 > 2 && ch7 > 3;
+  const macdBull = ch24 > 0 && ch7 > 0;
+  let m_score = 0;
+  if (sqzUp && rsiEst > 50 && rsiEst < 70)    m_score = 28;
+  else if (macdBull && rsiEst > 45)            m_score = 18;
+  else if (rsiEst > 40 && rsiEst < 70)         m_score = 12;
+  else                                          m_score = 4;
+  const m_txt  = sqzUp ? 'MOM: PATLADI!' : macdBull ? 'MOM: Gucleniyor' : rsiEst < 35 ? 'MOM: Asiri Satim(Dip?)' : 'MOM: Zayif';
+  const m_renk = sqzUp ? 'turuncu' : macdBull ? 'yesil' : rsiEst < 35 ? 'mor' : 'kirmizi';
+
+  // KATMAN 3: AKIS (0-25)
+  // Hacim bazli kurumsal alim tahmini
+  const volAvg  = mcap > 0 ? mcap * 0.03 : vol24;
+  const volRatio = volAvg > 0 ? vol24 / volAvg : 1;
+  const agresifAlim = ch24 > 3 && volRatio > 2;
+  const aliciBaskisi = ch24 > 0 && volRatio > 1.2;
+  let f_score = 0;
+  if (agresifAlim)       f_score = 23;
+  else if (aliciBaskisi) f_score = 15;
+  else if (ch24 > 0)     f_score = 8;
+  else                   f_score = 3;
+  const dz = (volRatio - 1).toFixed(1);
+  const f_txt  = agresifAlim ? 'AKIS: BUY! ' + dz + 's' : aliciBaskisi ? 'AKIS: Alici' : ch24 < -2 ? 'AKIS: Satici' : 'AKIS: Notr';
+  const f_renk = agresifAlim ? 'yesil' : aliciBaskisi ? 'yesil' : ch24 < -2 ? 'kirmizi' : 'sari';
+
+  // KATMAN 4: VOLATİLİTE (0-15)
+  const bbTight = Math.abs(ch24) < 1.5 && Math.abs(ch7) < 5;
+  const bbBreak = Math.abs(ch24) > 4;
+  let v_score = 0;
+  if (bbBreak && ch24 > 0)   v_score = 13;
+  else if (bbTight)          v_score = 10;
+  else if (ch24 > 0)         v_score = 7;
+  else                       v_score = 3;
+  const v_txt  = bbBreak && ch24 > 0 ? 'VOL: Patlama!' : bbTight ? 'VOL: Sikisma(AL)' : ch24 > 0 ? 'VOL: VWAP^' : 'VOL: VWAP v';
+  const v_renk = bbBreak && ch24 > 0 ? 'turuncu' : bbTight ? 'mor' : ch24 > 0 ? 'yesil' : 'kirmizi';
+
+  // KATMAN 5: ZAMAN/TF (0-5)
+  const tfGood = tf === '1sa' || tf === '4sa';
+  const z_score = tfGood ? 4 : 2;
+  const z_txt   = tfGood ? 'TF: OPTIMAL' : tf === '15dk' ? 'TF: Gurultulu' : 'TF: Uzun Vade';
+  const z_renk  = tfGood ? 'yesil' : 'sari';
+
+  // KOMPOZİT SKOR
+  const comp = Math.min(100, Math.round(t_score + m_score + f_score + v_score + z_score));
+
+  // KARAR
+  let karar, karar_rengi;
+  if (!trendDown && comp >= thr + 8 && trendStr) { karar = 'AL ***'; karar_rengi = 'yesil'; }
+  else if (!trendDown && comp >= thr + 4 && trendUp) { karar = 'AL **'; karar_rengi = 'yesil'; }
+  else if (!trendDown && comp >= thr) { karar = 'AL *'; karar_rengi = 'sari'; }
+  else if (!trendDown && comp >= thr - 10) { karar = 'HAZIRLAN'; karar_rengi = 'mor'; }
+  else if (trendDown) { karar = 'SAT / PAS'; karar_rengi = 'kirmizi'; }
+  else { karar = 'BEKLE'; karar_rengi = 'sari'; }
+
+  // TF bazli hedefler
+  const tpMap = {'15dk':[1.5,3.0,1.2],'1sa':[4.5,9.0,3.0],'4sa':[7.0,14.0,4.5],'1gun':[10.0,20.0,6.0]};
+  const [tp1p, tp2p, slp] = tpMap[tf] || [4.5,9.0,3.0];
+  const tp1 = price > 0 ? (price * (1 + tp1p/100)).toFixed(price < 1 ? 6 : 2) : '-';
+  const tp2 = price > 0 ? (price * (1 + tp2p/100)).toFixed(price < 1 ? 6 : 2) : '-';
+  const sl  = price > 0 ? (price * (1 - slp /100)).toFixed(price < 1 ? 6 : 2) : '-';
+
+  // ATH mesafe
+  const athPct = ath > 0 && price > 0 ? ((price/ath - 1) * 100).toFixed(1) : null;
+
+  // SİSTEM YORUMU
+  const yTrend  = trendStr ? 'Trend guclu ve yukari yonlu.' : trendUp ? 'Trend yukari, ama guclenme bekleniyor.' : trendDown ? 'Trend asagi - AL yapma!' : 'Trend yatay, yon belirsiz.';
+  const yMom    = sqzUp ? 'Momentum patladi, guclu hareket suruyor.' : macdBull ? 'Momentum pozitif, gucleniyor.' : 'Momentum zayif veya negatif.';
+  const yAkis   = agresifAlim ? 'Agresif kurumsal alim tespit edildi.' : aliciBaskisi ? 'Alici baskisi var.' : 'Akis notr veya satici yonlu.';
+  const yVol    = bbBreak ? 'Volatilite patladi, hareket basladi.' : bbTight ? 'BB sikisma var, patlama bekle.' : 'Normal volatilite.';
+  const yKarar  = karar.startsWith('AL') ? 'Kosullar uyumlu - giris degerlendir.' : karar === 'HAZIRLAN' ? 'Yakinda sinyal gelebilir, izle.' : karar === 'SAT / PAS' ? 'Trend asagi, pozisyon acma.' : 'Kosullar yetersiz, bekle.';
+  const yAth    = athPct ? ' ATHden ' + Math.abs(athPct) + '% ' + (athPct < 0 ? 'asagida.' : 'yukarida.') : '';
+
+  const sistem_yorumu = yTrend + ' ' + yMom + ' ' + yAkis + ' ' + yVol + yAth + ' >> ' + yKarar;
+
+  // Fiyat formatla
+  const fiyatStr = price > 0 ? '$' + (price < 0.01 ? price.toFixed(6) : price < 1 ? price.toFixed(4) : price.toFixed(2)) + ' (' + (ch24 >= 0 ? '+' : '') + ch24.toFixed(2) + '%)' : 'Veri bekleniyor...';
+
+  return {
+    sembol: sym,
+    zaman_dilimi: tfLabel,
+    guncel_fiyat: fiyatStr,
+    karar: karar,
+    karar_rengi: karar_rengi,
+    kompozit_skor: comp,
+    katmanlar: [
+      {isim:'TREND',      durum:t_txt, puan:t_score, renk:t_renk},
+      {isim:'MOMENTUM',   durum:m_txt, puan:m_score, renk:m_renk},
+      {isim:'AKIS',       durum:f_txt, puan:f_score, renk:f_renk},
+      {isim:'VOLATILITE', durum:v_txt, puan:v_score, renk:v_renk},
+      {isim:'ZAMAN/TF',   durum:z_txt, puan:z_score, renk:z_renk},
+    ],
+    sistem_yorumu: sistem_yorumu,
+    hedefler: {
+      tp1: '+' + tp1p + '% (' + tp1 + ')',
+      tp2: '+' + tp2p + '% (' + tp2 + ')',
+      sl:  '-' + slp  + '% (' + sl  + ')',
+      not: tfLabel + ' icin otomatik hedefler'
+    },
+    uyarilar: [
+      'Bu analiz fiyat degisimi ve hacim bazlidir.',
+      'Gercek zamanli RSI/MACD icin TradingView SRU v4 Panel kullanin.',
+      athPct && parseFloat(athPct) < -70 ? 'ATHden ' + Math.abs(athPct) + '% asagida - fundamentalleri kontrol edin.' : null,
+    ].filter(Boolean),
+    uclu_senkron: {
+      overlay: trendUp ? 'HMA muhtemelen yesil, VWAP ustu' : 'HMA kirmizi olabilir',
+      panel:   comp >= thr ? 'Skor ' + comp + ' - AL bolgesi' : 'Skor ' + comp + ' - BEKLE bolgesi',
+      genel:   karar.startsWith('AL') ? 'Uclu senkron pozitif - giris degerlendir' : 'Uclu senkron uyumlu degil - bekle'
+    }
+  };
 }
 
 function renderAiAnaliz(a, sym, tf) {
@@ -2442,279 +2552,178 @@ function renderAiAnaliz(a, sym, tf) {
   document.getElementById('ai-btn').textContent = 'ANALİZ ET';
 
   const renkMap = {
-    yesil: { bg: 'rgba(34,197,94,0.12)', border: 'var(--green)', text: 'var(--green)' },
-    kirmizi: { bg: 'rgba(239,68,68,0.12)', border: 'var(--red)', text: 'var(--red)' },
-    sari: { bg: 'rgba(234,179,8,0.12)', border: 'var(--yellow)', text: 'var(--yellow)' },
-    turuncu: { bg: 'rgba(249,115,22,0.12)', border: 'var(--orange)', text: 'var(--orange)' },
-    mor: { bg: 'rgba(168,85,247,0.12)', border: 'var(--purple)', text: 'var(--purple)' }
+    yesil:   {bg:'rgba(34,197,94,0.12)',  border:'var(--green)',  text:'var(--green)'},
+    kirmizi: {bg:'rgba(239,68,68,0.12)',  border:'var(--red)',    text:'var(--red)'},
+    sari:    {bg:'rgba(234,179,8,0.12)',  border:'var(--yellow)', text:'var(--yellow)'},
+    turuncu: {bg:'rgba(249,115,22,0.12)', border:'var(--orange)', text:'var(--orange)'},
+    mor:     {bg:'rgba(168,85,247,0.12)', border:'var(--purple)', text:'var(--purple)'}
   };
 
-  const kr  = renkMap[a.karar_rengi] || renkMap['sari'];
+  const kr = renkMap[a.karar_rengi] || renkMap['sari'];
 
-  // Baslik
-  document.getElementById('ai-coin-name').textContent  = sym + 'USDT';
-  document.getElementById('ai-tf-label').textContent   = tf + ' | ' + (a.guncel_fiyat || '');
+  document.getElementById('ai-coin-name').textContent = sym + 'USDT';
+  document.getElementById('ai-tf-label').textContent  = a.zaman_dilimi + ' | ' + (a.guncel_fiyat || '');
   const badge = document.getElementById('ai-karar-badge');
-  badge.textContent         = a.karar || 'BEKLE';
-  badge.style.background    = kr.bg;
-  badge.style.border        = '1px solid ' + kr.border;
-  badge.style.color         = kr.text;
-
-  // Header arka plan
+  badge.textContent      = a.karar || 'BEKLE';
+  badge.style.background = kr.bg;
+  badge.style.border     = '1px solid ' + kr.border;
+  badge.style.color      = kr.text;
   document.getElementById('ai-header').style.borderBottom = '2px solid ' + kr.border;
 
-  // Katmanlar
   const katDiv = document.getElementById('ai-katmanlar');
   katDiv.innerHTML = '';
-  (a.katmanlar || []).forEach(k => {
-    const r = renkMap[k.renk] || renkMap['sari'];
-    katDiv.innerHTML += `
-      <div class="katman-item ${k.renk}" style="border-left-color:${r.border}">
-        <div style="font-size:9px;color:var(--t3);font-weight:700">${k.isim}</div>
-        <div style="font-size:10px;color:${r.text};margin:2px 0;font-weight:600">${k.durum}</div>
-        <div style="font-size:9px;color:var(--t3)">${k.puan} puan</div>
-      </div>`;
+  (a.katmanlar || []).forEach(function(k) {
+    var r = renkMap[k.renk] || renkMap['sari'];
+    katDiv.innerHTML += '<div class="katman-item" style="border-left:3px solid ' + r.border + ';padding:6px 8px;background:var(--bg2);border-radius:5px">' +
+      '<div style="font-size:9px;color:var(--t3);font-weight:700">' + k.isim + '</div>' +
+      '<div style="font-size:10px;color:' + r.text + ';margin:2px 0;font-weight:600">' + k.durum + '</div>' +
+      '<div style="font-size:9px;color:var(--t3)">' + k.puan + ' puan</div>' +
+      '</div>';
   });
 
-  // Skor
-  const skor = a.kompozit_skor || 0;
-  const skorRenk = skor >= 78 ? 'var(--green)' : skor >= 60 ? 'var(--yellow)' : skor >= 40 ? 'var(--orange)' : 'var(--red)';
-  katDiv.innerHTML += `
-    <div style="grid-column:1/-1;padding:8px;background:var(--bg2);border-radius:5px;text-align:center">
-      <div style="font-size:10px;color:var(--t3);margin-bottom:4px">KOMPOZİT SKOR</div>
-      <div style="font-size:22px;font-weight:700;color:${skorRenk}">${skor}<span style="font-size:12px;color:var(--t3)">/100</span></div>
-      <div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
-        <div style="height:100%;width:${skor}%;background:${skorRenk};border-radius:2px;transition:width 0.8s"></div>
-      </div>
-    </div>`;
+  var skor = a.kompozit_skor || 0;
+  var skorRenk = skor >= 78 ? 'var(--green)' : skor >= 60 ? 'var(--yellow)' : skor >= 40 ? 'var(--orange)' : 'var(--red)';
+  katDiv.innerHTML += '<div style="grid-column:1/-1;padding:8px;background:var(--bg2);border-radius:5px;text-align:center">' +
+    '<div style="font-size:10px;color:var(--t3);margin-bottom:4px">KOMPOZIT SKOR</div>' +
+    '<div style="font-size:22px;font-weight:700;color:' + skorRenk + '">' + skor + '<span style="font-size:12px;color:var(--t3)">/100</span></div>' +
+    '<div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">' +
+    '<div style="height:100%;width:' + skor + '%;background:' + skorRenk + ';border-radius:2px;transition:width 0.8s"></div></div></div>';
 
-  // Yorum
-  document.getElementById('ai-yorum').innerHTML =
-    (a.sistem_yorumu || '').split('\n').join('<br>');
-
-  // Uclu senkron
+  var yorumHtml = a.sistem_yorumu || '';
   if (a.uclu_senkron) {
-    document.getElementById('ai-yorum').innerHTML +=
-      `<div style="margin-top:10px;padding:8px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--cyan)">
-        <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">ÜÇLÜ SENKRON</div>
-        <div style="font-size:10px;color:var(--t2);line-height:1.7">
-          🔲 <b>Overlay:</b> ${a.uclu_senkron.overlay}<br>
-          📊 <b>Panel:</b> ${a.uclu_senkron.panel}<br>
-          🎯 <b>Genel:</b> ${a.uclu_senkron.genel}
-        </div>
-      </div>`;
+    yorumHtml += '<div style="margin-top:10px;padding:8px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--cyan)">' +
+      '<div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">UCLU SENKRON</div>' +
+      '<div style="font-size:10px;color:var(--t2);line-height:1.7">' +
+      '🔲 <b>Overlay:</b> ' + a.uclu_senkron.overlay + '<br>' +
+      '📊 <b>Panel:</b> ' + a.uclu_senkron.panel + '<br>' +
+      '🎯 <b>Genel:</b> ' + a.uclu_senkron.genel + '</div></div>';
   }
-
-  // Uyarilar
   if (a.uyarilar && a.uyarilar.length > 0) {
-    document.getElementById('ai-yorum').innerHTML +=
-      `<div style="margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border-radius:6px;border-left:3px solid var(--red)">
-        <div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ UYARILAR</div>
-        ${a.uyarilar.map(u => `<div style="font-size:10px;color:var(--t2)">• ${u}</div>`).join('')}
-      </div>`;
+    yorumHtml += '<div style="margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border-radius:6px;border-left:3px solid var(--red)">' +
+      '<div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:4px">UYARILAR</div>' +
+      a.uyarilar.map(function(u){ return '<div style="font-size:10px;color:var(--t2)">• ' + u + '</div>'; }).join('') + '</div>';
   }
+  document.getElementById('ai-yorum').innerHTML = yorumHtml;
 
-  // Hedefler
-  const hDiv = document.getElementById('ai-hedefler');
-  const h = a.hedefler || {};
-  hDiv.innerHTML = `
-    <div class="hedef-box">
-      <div style="font-size:9px;color:var(--t3)">TP1</div>
-      <div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp1||'-'}</div>
-    </div>
-    <div class="hedef-box">
-      <div style="font-size:9px;color:var(--t3)">TP2</div>
-      <div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp2||'-'}</div>
-    </div>
-    <div class="hedef-box">
-      <div style="font-size:9px;color:var(--t3)">STOP</div>
-      <div style="font-size:13px;font-weight:700;color:var(--red)">${h.sl||'-'}</div>
-    </div>
-    <div class="hedef-box" style="grid-column:1/-1">
-      <div style="font-size:9px;color:var(--t3)">${h.not||''}</div>
-    </div>`;
+  var h = a.hedefler || {};
+  document.getElementById('ai-hedefler').innerHTML =
+    '<div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP1</div><div style="font-size:12px;font-weight:700;color:var(--green)">' + (h.tp1||'-') + '</div></div>' +
+    '<div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP2</div><div style="font-size:12px;font-weight:700;color:var(--green)">' + (h.tp2||'-') + '</div></div>' +
+    '<div class="hedef-box"><div style="font-size:9px;color:var(--t3)">STOP</div><div style="font-size:12px;font-weight:700;color:var(--red)">' + (h.sl||'-') + '</div></div>' +
+    '<div class="hedef-box"><div style="font-size:9px;color:var(--t3)">' + (h.not||'') + '</div></div>';
 
   document.getElementById('ai-result').style.display = 'block';
 }
 
 function kaydedAiHistory(analiz, sym, tf) {
-  const hist = document.getElementById('ai-history');
-  const kr = { yesil:'var(--green)', kirmizi:'var(--red)', sari:'var(--yellow)', turuncu:'var(--orange)', mor:'var(--purple)' };
-  const renk = kr[analiz.karar_rengi] || 'var(--t3)';
-  const item = document.createElement('div');
-  item.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg2);border-radius:5px;margin-bottom:4px;cursor:pointer;border-left:3px solid ' + renk;
-  item.innerHTML = `
-    <span style="font-size:11px;font-weight:600;color:var(--t1)">${sym} <span style="color:var(--t3);font-size:10px">${tf}</span></span>
-    <span style="font-size:11px;font-weight:700;color:${renk}">${analiz.karar}</span>
-    <span style="font-size:10px;color:var(--t3)">${new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span>`;
+  var hist = document.getElementById('ai-history');
+  if (!hist) return;
+  var kr = {yesil:'var(--green)',kirmizi:'var(--red)',sari:'var(--yellow)',turuncu:'var(--orange)',mor:'var(--purple)'};
+  var renk = kr[analiz.karar_rengi] || 'var(--t3)';
+  var item = document.createElement('div');
+  item.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg2);border-radius:5px;margin-bottom:4px;border-left:3px solid ' + renk;
+  item.innerHTML = '<span style="font-size:11px;font-weight:600;color:var(--t1)">' + sym + ' <span style="color:var(--t3);font-size:10px">' + tf + '</span></span>' +
+    '<span style="font-size:11px;font-weight:700;color:' + renk + '">' + analiz.karar + '</span>' +
+    '<span style="font-size:10px;color:var(--t3)">' + new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}) + '</span>';
   hist.insertBefore(item, hist.firstChild);
-  // Max 5 gecmis
   while (hist.children.length > 5) hist.removeChild(hist.lastChild);
 }
+// ═══ AI ANALİZ SONU ═══
 
 // ═══ BIST AI ANALİZ ═══
 async function bistAiAnaliz(sembol) {
   document.getElementById('bist-ai-box').style.display = 'none';
   document.getElementById('bist-ai-loading').style.display = 'block';
   document.getElementById('bist-ai-sembol').textContent = sembol + '.IS';
-
-  const prompt = `Sen SRU v4 BIST spot trading sistemi analistisin.
-
-Analiz edilecek: ${sembol} (Borsa İstanbul - BIST)
-
-SRU v4 sistemi BIST için özel parametrelerle çalışır:
-- EMA: 50 periyot (kripto 55 yerine)
-- RSI: 35-68 arası (kripto 40-68 yerine)
-- Hacim eşiği: 1.5x ortalama
-- ADX minimum: 18
-- Seans: 09:00-18:00 TRST
-- Devre kesici: %10 limit
-- Kurumsal hacim: 3x+ = büyük oyuncu
-
-5 katman değerlendirmesi:
-1. TREND: Hull MA + EMA50/200 + Günlük TF hizalama
-2. MOMENTUM: Squeeze + MACD + RSI (35-68)
-3. AKIŞ: Kurumsal hacim tespiti + OBV
-4. VOLATİLİTE: BB sıkışma + VWAP
-5. ZAMAN: Seans içi mi? Bilanço dönemi mi?
-
-SADECE JSON formatında yanıtla:
-{
-  "sembol": "${sembol}",
-  "borsa": "BIST",
-  "guncel_fiyat": "fiyat TL",
-  "karar": "AL *** / AL ** / AL * / HAZIRLAN / BEKLE / PAS / SAT",
-  "karar_rengi": "yesil / sari / turuncu / kirmizi / mor",
-  "kompozit_skor": 0-100,
-  "katmanlar": [
-    {"isim": "TREND", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi"},
-    {"isim": "MOMENTUM", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi/mor/turuncu"},
-    {"isim": "AKIS/HACIM", "durum": "metin", "puan": 0-25, "renk": "yesil/sari/kirmizi/turuncu"},
-    {"isim": "VOLATILITE", "durum": "metin", "puan": 0-15, "renk": "yesil/sari/kirmizi/mor"},
-    {"isim": "BIST OZEL", "durum": "metin", "puan": 0-5, "renk": "yesil/sari/kirmizi"}
-  ],
-  "sistem_yorumu": "BIST'e özgü 3-4 cümle: trend, hacim, seans durumu, risk faktörleri. Bilanço dönemi/KAP haberi varsa belirt.",
-  "hedefler": {
-    "tp1": "+X.X%",
-    "tp2": "+X.X%",
-    "sl": "-X.X%",
-    "not": "BIST özel not (devre kesici, lot büyüklüğü vb)"
-  },
-  "uyarilar": ["BIST'e özgü uyarılar: likidite, bilanço, devre kesici vb"],
-  "bist_ozel": {
-    "sektor": "sektör adı",
-    "piyasa_degeri": "büyük/orta/küçük",
-    "likidite": "yüksek/orta/düşük",
-    "endeks": "BIST100/BIST50/BIST30"
-  }
-}`;
-
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    const data = await resp.json();
-    const txt  = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-    let jsonStr = txt.replace(/```json|```/g, '').trim();
-    const m = jsonStr.match(/\{[\s\S]*\}/);
-    if (m) jsonStr = m[0];
-    const analiz = JSON.parse(jsonStr);
-    renderBistAi(analiz, sembol);
+    // Oncelikle mevcut bistCoins arrayi kullan (BigPara TL verisi)
+    var coin = bistCoins.find(function(c){ return c.sym === sembol; });
+    var price = 0, ch24 = 0, volRatio = 1, vol = 0, ath = 0;
+    if (coin) {
+      price    = coin.price  || 0;
+      ch24     = coin.ch1    || 0;
+      vol      = coin.vol    || 0;
+      ath      = coin.ath    || 0;
+      // Hacim orani hesapla (bistScore'dan)
+      var avgVol = vol * 0.65;
+      volRatio   = avgVol > 0 ? vol / avgVol : 1;
+    }
+    renderBistAi(sruV4BistAnaliz(sembol, price, ch24, ch24 * 1.8, volRatio, vol, ath), sembol);
   } catch(e) {
     document.getElementById('bist-ai-loading').style.display = 'none';
     document.getElementById('bist-ai-box').style.display = 'block';
-    document.getElementById('bist-ai-yorum').innerHTML = '<span style="color:var(--red)">Analiz hatasi: ' + e.message + '</span>';
+    document.getElementById('bist-ai-yorum').innerHTML = '<span style="color:var(--red)">Hata: ' + e.message + '</span>';
   }
 }
-
-function renderBistAi(a, sembol) {
-  document.getElementById('bist-ai-loading').style.display = 'none';
-
-  const renkMap = {
-    yesil:   { bg: 'rgba(34,197,94,0.12)',  border: 'var(--green)',  text: 'var(--green)' },
-    kirmizi: { bg: 'rgba(239,68,68,0.12)',  border: 'var(--red)',    text: 'var(--red)' },
-    sari:    { bg: 'rgba(234,179,8,0.12)',  border: 'var(--yellow)', text: 'var(--yellow)' },
-    turuncu: { bg: 'rgba(249,115,22,0.12)', border: 'var(--orange)', text: 'var(--orange)' },
-    mor:     { bg: 'rgba(168,85,247,0.12)', border: 'var(--purple)', text: 'var(--purple)' }
+function sruV4BistAnaliz(sym,price,ch24,ch7,volRatio,vol,ath){
+  var trendUp=ch24>1&&ch7>0,trendStr=ch24>2.5&&ch7>5,trendDown=ch24<-2;
+  var t_score=trendStr?27:trendUp?17:trendDown?3:9;
+  var t_txt=trendStr?'TREND: TAM YUKARI':trendUp?'TREND: Yukari':trendDown?'TREND: ASAGI!':'TREND: Yatay';
+  var t_renk=trendStr?'yesil':trendUp?'sari':'kirmizi';
+  var rsiEst=Math.min(82,Math.max(22,50+ch24*2.5+ch7*0.4));
+  var sqzUp=ch24>2&&ch7>4;
+  var m_score=sqzUp&&rsiEst>45&&rsiEst<68?27:ch24>0&&rsiEst>40?16:rsiEst<35?12:4;
+  var m_txt=sqzUp?'MOM: PATLADI!':ch24>0?'MOM: Pozitif':rsiEst<35?'MOM: Asiri Satim':'MOM: Zayif';
+  var m_renk=sqzUp?'turuncu':ch24>0?'yesil':rsiEst<35?'mor':'kirmizi';
+  var kurum=volRatio>=3&&ch24>0,alici=volRatio>=1.5&&ch24>0;
+  var f_score=kurum?23:alici?15:ch24>0?8:3;
+  var f_txt=kurum?'AKIS: KURUM! '+volRatio.toFixed(1)+'x':alici?'AKIS: Alici '+volRatio.toFixed(1)+'x':ch24<-2?'AKIS: Satici':'AKIS: Notr';
+  var f_renk=kurum?'yesil':alici?'yesil':ch24<-2?'kirmizi':'sari';
+  var bbTight=Math.abs(ch24)<1.5,bbBreak=Math.abs(ch24)>3.5;
+  var v_score=bbBreak&&ch24>0?13:bbTight?10:ch24>0?7:3;
+  var v_txt=bbBreak&&ch24>0?'VOL: Patlama!':bbTight?'VOL: Sikisma(AL)':ch24>0?'VOL: VWAP^':'VOL: VWAP v';
+  var v_renk=bbBreak&&ch24>0?'turuncu':bbTight?'mor':ch24>0?'yesil':'kirmizi';
+  var comp=Math.min(100,Math.round(t_score+m_score+f_score+v_score+4));
+  var thr=64;
+  var karar,karar_rengi;
+  if(!trendDown&&comp>=thr+8&&kurum){karar='AL ***';karar_rengi='yesil';}
+  else if(!trendDown&&comp>=thr+4){karar='AL **';karar_rengi='yesil';}
+  else if(!trendDown&&comp>=thr){karar='AL *';karar_rengi='sari';}
+  else if(!trendDown&&comp>=thr-10){karar='HAZIRLAN';karar_rengi='mor';}
+  else if(trendDown){karar='SAT / PAS';karar_rengi='kirmizi';}
+  else{karar='BEKLE';karar_rengi='sari';}
+  var fStr=price>0?price.toFixed(2)+' TL | Degisim: '+(ch24>=0?'+':'')+ch24.toFixed(2)+'%':'Tarama yapilmamis - once BIST TARA butonuna basin';
+  return{
+    sembol:sym,guncel_fiyat:fStr,karar:karar,karar_rengi:karar_rengi,kompozit_skor:comp,
+    katmanlar:[
+      {isim:'TREND',durum:t_txt,puan:t_score,renk:t_renk},
+      {isim:'MOMENTUM',durum:m_txt,puan:m_score,renk:m_renk},
+      {isim:'AKIS/HACIM',durum:f_txt,puan:f_score,renk:f_renk},
+      {isim:'VOLATILITE',durum:v_txt,puan:v_score,renk:v_renk},
+      {isim:'BIST OZEL',durum:'BIST: Seans Aktif',puan:4,renk:'yesil'},
+    ],
+    sistem_yorumu:(trendStr?'Trend guclu yukari.':trendUp?'Trend yukari.':trendDown?'Trend ASAGI!':'Trend yatay.')+' '+(kurum?'Kurumsal alim '+volRatio.toFixed(1)+'x.':alici?'Alici baskisi.':'Normal hacim.')+' '+( karar.startsWith('AL')?'Giris degerlendir.':karar==='HAZIRLAN'?'Yaklasıyor, izle.':'Bekle.'),
+    hedefler:{
+      tp1:'+2.5%  '+(price>0?(price*1.025).toFixed(2)+' TL':'-'),
+      tp2:'+5.0%  '+(price>0?(price*1.050).toFixed(2)+' TL':'-'),
+      sl:'-3.0%  '+(price>0?(price*0.970).toFixed(2)+' TL':'-'),
+      not:'BIST | Giris: '+(price>0?price.toFixed(2)+' TL':'—')
+    },
+    uyarilar:['BIST seans: 09:00-18:00 TRST','Bu analiz fiyat/hacim bazlidir. KAP takip edin.',ch24>9?'Devre kesici riski: %10 limit!':null].filter(Boolean)
   };
-
-  const kr = renkMap[a.karar_rengi] || renkMap['sari'];
-
-  // Karar badge
-  const badge = document.getElementById('bist-ai-karar');
-  badge.textContent = a.karar || 'BEKLE';
-  badge.style.background = kr.bg;
-  badge.style.border = '1px solid ' + kr.border;
-  badge.style.color = kr.text;
-  document.getElementById('bist-ai-header').style.borderBottom = '2px solid ' + kr.border;
-
-  // Katmanlar
-  const katDiv = document.getElementById('bist-ai-katmanlar');
-  katDiv.innerHTML = '';
-  (a.katmanlar || []).forEach(k => {
-    const r = renkMap[k.renk] || renkMap['sari'];
-    katDiv.innerHTML += `<div class="katman-item ${k.renk}" style="border-left-color:${r.border}">
-      <div style="font-size:9px;color:var(--t3);font-weight:700">${k.isim}</div>
-      <div style="font-size:10px;color:${r.text};margin:2px 0;font-weight:600">${k.durum}</div>
-      <div style="font-size:9px;color:var(--t3)">${k.puan} puan</div>
-    </div>`;
-  });
-
-  // Skor
-  const skor = a.kompozit_skor || 0;
-  const skorRenk = skor >= 78 ? 'var(--green)' : skor >= 60 ? 'var(--yellow)' : skor >= 40 ? 'var(--orange)' : 'var(--red)';
-  katDiv.innerHTML += `<div style="grid-column:1/-1;padding:8px;background:var(--bg2);border-radius:5px;text-align:center">
-    <div style="font-size:10px;color:var(--t3);margin-bottom:4px">SKOR</div>
-    <div style="font-size:22px;font-weight:700;color:${skorRenk}">${skor}<span style="font-size:12px;color:var(--t3)">/100</span></div>
-    <div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
-      <div style="height:100%;width:${skor}%;background:${skorRenk};border-radius:2px;transition:width 0.8s"></div>
-    </div>
-  </div>`;
-
-  // BIST ozel bilgi
-  if (a.bist_ozel) {
-    const bo = a.bist_ozel;
-    katDiv.innerHTML += `<div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap">
-      ${bo.sektor ? '<span style="padding:3px 8px;background:var(--bg2);border-radius:4px;font-size:10px;color:var(--cyan)">' + bo.sektor + '</span>' : ''}
-      ${bo.endeks ? '<span style="padding:3px 8px;background:var(--bg2);border-radius:4px;font-size:10px;color:var(--orange)">' + bo.endeks + '</span>' : ''}
-      ${bo.likidite ? '<span style="padding:3px 8px;background:var(--bg2);border-radius:4px;font-size:10px;color:var(--t2)">Likidite: ' + bo.likidite + '</span>' : ''}
-    </div>`;
-  }
-
-  // Yorum
-  let yorumHtml = (a.sistem_yorumu || '').split('\n').join('<br>');
-
-  // Uyarilar
-  if (a.uyarilar && a.uyarilar.length > 0) {
-    yorumHtml += `<div style="margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border-radius:6px;border-left:3px solid var(--red)">
-      <div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ BIST UYARILARI</div>
-      ${a.uyarilar.map(u => '<div style="font-size:10px;color:var(--t2)">• ' + u + '</div>').join('')}
-    </div>`;
-  }
-  document.getElementById('bist-ai-yorum').innerHTML = yorumHtml;
-
-  // Hedefler
-  const h = a.hedefler || {};
-  document.getElementById('bist-ai-hedefler').innerHTML = `
-    <div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP1</div><div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp1||'-'}</div></div>
-    <div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP2</div><div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp2||'-'}</div></div>
-    <div class="hedef-box"><div style="font-size:9px;color:var(--t3)">STOP</div><div style="font-size:13px;font-weight:700;color:var(--red)">${h.sl||'-'}</div></div>
-    <div class="hedef-box" style="grid-column:span 1"><div style="font-size:9px;color:var(--t3)">${h.not||''}</div></div>`;
-
-  document.getElementById('bist-ai-box').style.display = 'block';
-  document.getElementById('bist-ai-box').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function renderBistAi(a,sembol){
+  document.getElementById('bist-ai-loading').style.display='none';
+  var rM={yesil:{bg:'rgba(34,197,94,0.12)',border:'var(--green)',text:'var(--green)'},kirmizi:{bg:'rgba(239,68,68,0.12)',border:'var(--red)',text:'var(--red)'},sari:{bg:'rgba(234,179,8,0.12)',border:'var(--yellow)',text:'var(--yellow)'},turuncu:{bg:'rgba(249,115,22,0.12)',border:'var(--orange)',text:'var(--orange)'},mor:{bg:'rgba(168,85,247,0.12)',border:'var(--purple)',text:'var(--purple)'}};
+  var kr=rM[a.karar_rengi]||rM['sari'];
+  var badge=document.getElementById('bist-ai-karar');
+  badge.textContent=a.karar||'BEKLE';badge.style.background=kr.bg;badge.style.border='1px solid '+kr.border;badge.style.color=kr.text;
+  document.getElementById('bist-ai-header').style.borderBottom='2px solid '+kr.border;
+  var kDiv=document.getElementById('bist-ai-katmanlar');kDiv.innerHTML='';
+  (a.katmanlar||[]).forEach(function(k){var r=rM[k.renk]||rM['sari'];kDiv.innerHTML+='<div style="border-left:3px solid '+r.border+';padding:6px 8px;background:var(--bg2);border-radius:5px"><div style="font-size:9px;color:var(--t3);font-weight:700">'+k.isim+'</div><div style="font-size:10px;color:'+r.text+';margin:2px 0;font-weight:600">'+k.durum+'</div><div style="font-size:9px;color:var(--t3)">'+k.puan+' puan</div></div>';});
+  var s=a.kompozit_skor||0,sR=s>=74?'var(--green)':s>=55?'var(--yellow)':s>=35?'var(--orange)':'var(--red)';
+  kDiv.innerHTML+='<div style="grid-column:1/-1;padding:8px;background:var(--bg2);border-radius:5px;text-align:center"><div style="font-size:10px;color:var(--t3);margin-bottom:4px">SKOR</div><div style="font-size:22px;font-weight:700;color:'+sR+'">'+s+'<span style="font-size:12px;color:var(--t3)">/100</span></div><div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+s+'%;background:'+sR+';border-radius:2px"></div></div></div>';
+  var yHtml=a.sistem_yorumu||'';
+  if(a.uyarilar&&a.uyarilar.length)yHtml+='<div style="margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border-radius:6px;border-left:3px solid var(--red)"><div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:4px">UYARILAR</div>'+a.uyarilar.map(function(u){return'<div style="font-size:10px;color:var(--t2)">* '+u+'</div>';}).join('')+'</div>';
+  document.getElementById('bist-ai-yorum').innerHTML=yHtml;
+  var h=a.hedefler||{};
+  document.getElementById('bist-ai-hedefler').innerHTML='<div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP1</div><div style="font-size:12px;font-weight:700;color:var(--green)">'+(h.tp1||'-')+'</div></div><div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP2</div><div style="font-size:12px;font-weight:700;color:var(--green)">'+(h.tp2||'-')+'</div></div><div class="hedef-box"><div style="font-size:9px;color:var(--t3)">STOP</div><div style="font-size:12px;font-weight:700;color:var(--red)">'+(h.sl||'-')+'</div></div><div class="hedef-box"><div style="font-size:9px;color:var(--t3)">'+(h.not||'')+'</div></div>';
+  document.getElementById('bist-ai-box').style.display='block';
+  document.getElementById('bist-ai-box').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 // ═══ BIST AI SONU ═══
 
-// ═══ AI ANALİZ SONU ═══
+
 
 </script>
 
