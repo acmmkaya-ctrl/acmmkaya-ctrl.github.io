@@ -105,6 +105,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .pgrid{display:flex;flex-direction:column;gap:9px;}
 .pcard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;}
 .pcard.s10{border-color:rgba(239,68,68,.55);box-shadow:0 0 18px rgba(239,68,68,.12);}
+.pcard.pump-max{border-color:var(--yellow)!important;box-shadow:0 0 8px rgba(234,179,8,0.3);}
 .pcard.s9{border-color:rgba(249,115,22,.45);box-shadow:0 0 12px rgba(249,115,22,.08);}
 .pcard.s8{border-color:rgba(245,158,11,.32);}
 .pcard.s7{border-color:rgba(59,130,246,.22);}
@@ -476,6 +477,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 
 <!-- RADAR -->
 <div class="tc on" id="tc-pump">
+  <!-- Pump Filtre Butonlari -->
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+    <div id="pf-all"   onclick="pumpFiltre('all',this)"   style="padding:5px 10px;background:var(--cyan);border-radius:6px;font-size:10px;font-weight:700;color:#000;cursor:pointer">Tümü</div>
+    <div id="pf-pump"  onclick="pumpFiltre('pump',this)"  style="padding:5px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:10px;font-weight:700;color:var(--yellow);cursor:pointer">🚀 Pump Alarm</div>
+    <div id="pf-giris" onclick="pumpFiltre('giris',this)" style="padding:5px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:10px;font-weight:700;color:var(--green);cursor:pointer">✅ GİR</div>
+    <div id="pf-top"   onclick="pumpFiltre('top',this)"   style="padding:5px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:10px;font-weight:700;color:var(--orange);cursor:pointer">🔥 Top 10</div>
+  </div>
+  <div id="pump-ozet" style="display:none;padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--yellow)">
+    <span style="font-size:10px;color:var(--yellow);font-weight:700">🚀 PUMP ALARM: </span>
+    <span id="pump-ozet-txt" style="font-size:10px;color:var(--t2)"></span>
+  </div>
   <div class="pgrid" id="pgrid">
     <div class="empty"><div class="empi">🎯</div><div class="empt">TARA butonuna bas — 7 katmanlı analiz başlar</div></div>
   </div>
@@ -1557,7 +1569,22 @@ function calcScore(c){
   const conf=sc>=9?'high':sc>=8?'med':'low';
   const confTxt=sc>=9?'Yüksek Güven':sc>=8?'Orta Güven':'Düşük Güven';
   const{decision,reasons}=getDecision(c,sc);
-  return{sc,sigs,inds,urgency,pumpIn,tp1,tp2,tp3,sl,pumpPct,conf,confTxt,decision,reasons,buyPressure:bp};
+  // ── SRU v4 PUMP FİLTRESİ
+  // 5 kosul: Squeeze + Delta + Hacim + Trend + Sweep
+  const pump_squeeze = vr > 0.05 && vr < 0.15;              // BB sikisma proxy (dusuk hacim/MC)
+  const pump_delta   = vr > 0.3 && c24 > 2;                 // Agresif alim proxy
+  const pump_hacim   = vr > 0.4 || (c.total_volume > 50e6 && c24 > 3);  // Olaganustu hacim
+  const pump_trend   = c24 > 1 && c7 > 0;                   // Yukari trend
+  const pump_sweep   = vr > 0.6 && c24 > 5;                 // Sweep proxy
+
+  const pump_skor = (pump_squeeze?1:0) + (pump_delta?1:0) + (pump_hacim?1:0) + (pump_trend?1:0) + (pump_sweep?1:0);
+  const pump_alarm = pump_skor >= 3 && c24 > 1;
+  const pump_max   = pump_skor >= 4 && c24 > 3 && vr > 0.3;
+
+  if (pump_max)  sigs.push({t:'pump', tx:'🚀 PUMP ALARM! SRU v4 (' + pump_skor + '/5)'});
+  else if (pump_alarm) sigs.push({t:'pump', tx:'⚡ Pump Sinyali (' + pump_skor + '/5)'});
+
+  return{sc,sigs,inds,urgency,pumpIn,tp1,tp2,tp3,sl,pumpPct,conf,confTxt,decision,reasons,buyPressure:bp,pump_skor,pump_alarm,pump_max};
 }
 
 // ══════════════════════════════════════
@@ -1698,22 +1725,42 @@ function ic(s){const p=['#3b82f6','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef44
 // ══════════════════════════════════════
 // RENDER PUMP CARDS
 // ══════════════════════════════════════
+function renderCoins(liste) {
+  // Pump filtresi icin alias
+  var eski = coins;
+  coins = liste;
+  renderPump();
+  coins = eski;
+}
 function renderPump(){
+  tumKoinler = coins.length > 0 ? coins : tumKoinler;
   document.getElementById('bdg').textContent=coins.filter(x=>x.sc>=8).length;
+  // Pump ozet
+  var pumplar = coins.filter(function(c){ return c.pump_alarm || c.pump_max; });
+  if (pumplar.length > 0) {
+    document.getElementById('pump-ozet').style.display = 'block';
+    document.getElementById('pump-ozet-txt').textContent =
+      pumplar.length + ' coin pump sinyali: ' +
+      pumplar.slice(0,5).map(function(c){ return (c.symbol||'').toUpperCase() + (c.pump_max?' 🚀':'⚡'); }).join(', ');
+  } else {
+    document.getElementById('pump-ozet').style.display = 'none';
+  }
   const grid=document.getElementById('pgrid');
   if(!coins.length){grid.innerHTML='<div class="empty"><div class="empi">🔍</div><div class="empt">Sinyal bulunamadı</div></div>';return;}
   grid.innerHTML=coins.map((c,i)=>{
     const sym=(c.symbol||'').toUpperCase();
     const ch24=c.price_change_percentage_24h||0,up=ch24>=0;
     const col=ic(sym);
-    const scCls='pcard s'+Math.min(10,Math.max(6,Math.floor(c.sc)));
+    const scCls='pcard'+(c.pump_max?' pump-max':'')+' s'+Math.min(10,Math.max(6,Math.floor(c.sc)));
+    const pumpBadge = c.pump_max ? '<div style="position:absolute;top:6px;right:6px;background:var(--yellow);color:#000;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px">🚀 PUMP</div>' : c.pump_alarm ? '<div style="position:absolute;top:6px;right:6px;background:var(--orange);color:#000;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px">⚡ PUMP?</div>' : '';
     const ringCls='ring r'+Math.min(10,Math.max(6,Math.floor(c.sc)));
     const tpPct=((c.tp2/c.current_price-1)*100).toFixed(1);
     const girCls=c.decision==='gir'?'gir':c.decision==='bekle'?'bekle':'dikkat';
     const girTxt=c.decision==='gir'?'✅ GİR':c.decision==='bekle'?'⏳ BEKLE':'⚠️ DİKKAT';
     const rsVsBtc=(ch24-(mktData.btcChange||0)).toFixed(1);
     const tfs=[{l:'5M',h:c.sc>=9.5},{l:'15M',h:c.sc>=9.0},{l:'1H',h:c.sc>=8.5},{l:'4H',h:c.sc>=8.0},{l:'1D',h:c.sc>=7.5}];
-    return`<div class="${scCls}" onclick="openModal(${i})">
+    return`<div class="${scCls}" style="position:relative" onclick="openModal(${i})">
+      ${pumpBadge}
       <div class="ubar ${c.urgency}"></div>
       <div class="ct">
         ${c.image?`<img class="pava" src="${c.image}" alt="${sym}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`:``}
@@ -2090,6 +2137,35 @@ window.addEventListener('load',function(){
 setInterval(function(){if(!scanning)startScan();},15*60*1000);
 
 // ══════════════════════════════════════
+// ═══ PUMP FILTRE ═══
+var tumKoinler = [];
+function pumpFiltre(tip, el) {
+  document.querySelectorAll('[id^="pf-"]').forEach(function(b){
+    b.style.background = 'var(--bg2)';
+    b.style.border = '1px solid var(--border)';
+  });
+  el.style.background = tip === 'pump' ? 'var(--yellow)' :
+                         tip === 'giris' ? 'var(--green)' :
+                         tip === 'top' ? 'var(--orange)' : 'var(--cyan)';
+  el.style.color = '#000';
+  el.style.border = 'none';
+
+  var grid = document.getElementById('pgrid');
+  var liste = tumKoinler;
+
+  if (tip === 'pump')  liste = tumKoinler.filter(function(c){ return c.pump_alarm || c.pump_max; });
+  else if (tip === 'giris') liste = tumKoinler.filter(function(c){ return c.decision === 'GIR' || c.decision === 'GUCLU GIR'; });
+  else if (tip === 'top')   liste = tumKoinler.slice(0, 10);
+
+  if (liste.length === 0) {
+    grid.innerHTML = '<div class="empty"><div class="empi">🔍</div><div class="empt">Bu filtrede sonuc yok</div></div>';
+    return;
+  }
+  // Mevcut render fonksiyonunu kullan
+  renderCoins(liste);
+}
+// ═══ PUMP FILTRE SONU ═══
+
 // BIST TARAYICI
 // ══════════════════════════════════════
 const BIST100 = [
