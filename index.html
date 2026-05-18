@@ -373,6 +373,30 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .bist-tp2{background:rgba(16,185,129,.1);color:var(--g2);}
 .bist-tp3{background:rgba(6,182,212,.1);color:var(--cyan);}
 .bist-sl{background:rgba(239,68,68,.1);color:var(--r2);}
+
+/* AI Analiz */
+@keyframes aiLoad {
+  0%{width:0%;margin-left:0}
+  50%{width:60%;margin-left:20%}
+  100%{width:0%;margin-left:100%}
+}
+.katman-item {
+  padding: 6px 8px;
+  background: var(--bg2);
+  border-radius: 5px;
+  border-left: 3px solid var(--border);
+}
+.katman-item.yesil { border-left-color: var(--green); }
+.katman-item.kirmizi { border-left-color: var(--red); }
+.katman-item.sari { border-left-color: var(--yellow); }
+.katman-item.mor { border-left-color: var(--purple); }
+.katman-item.turuncu { border-left-color: var(--orange); }
+.hedef-box {
+  padding: 6px 4px;
+  background: var(--bg2);
+  border-radius: 5px;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -445,6 +469,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
   <div class="tab" data-tab="windows" onclick="switchTab(this)">⏰ TR Saatleri</div>
   <div class="tab" data-tab="egitim" onclick="switchTab(this)">📚 Eğitim</div>
   <div class="tab" data-tab="bist" onclick="switchTab(this)">📈 BIST <span class="bdg" id="bdg-bist">0</span></div>
+  <div class="tab" data-tab="analiz" onclick="switchTab(this)">🤖 AI Analiz</div>
 </div>
 <div class="content">
 <div class="main">
@@ -1050,6 +1075,83 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 
 
 <!-- BIST TARAYICI -->
+<div class="tc" id="tc-analiz">
+  <div style="padding:4px 0 10px">
+    <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:8px">🤖 SRU v4 Sistem AI Analizi</div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Sembol girin. Sistem SRU v4 mantığıyla detaylı analiz üretir.</div>
+
+    <!-- Sembol + TF seçimi -->
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <input id="ai-symbol" type="text" placeholder="BTC, ETH, XRP..." maxlength="20"
+        style="flex:1;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;outline:none">
+      <select id="ai-tf" style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;outline:none">
+        <option value="15dk">15 dk</option>
+        <option value="1sa" selected>1 Saat</option>
+        <option value="4sa">4 Saat</option>
+        <option value="1gun">Günlük</option>
+      </select>
+      <button onclick="aiAnaliz()" id="ai-btn"
+        style="padding:8px 14px;background:var(--cyan);border:none;border-radius:6px;color:#000;font-size:12px;font-weight:700;cursor:pointer">
+        ANALİZ ET
+      </button>
+    </div>
+
+    <!-- Hizli semboller -->
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px">
+      <span onclick="hizliAi('BTC')"  style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--orange);cursor:pointer">BTC</span>
+      <span onclick="hizliAi('ETH')"  style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--cyan);cursor:pointer">ETH</span>
+      <span onclick="hizliAi('XRP')"  style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--green);cursor:pointer">XRP</span>
+      <span onclick="hizliAi('SOL')"  style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--purple);cursor:pointer">SOL</span>
+      <span onclick="hizliAi('BNB')"  style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--yellow);cursor:pointer">BNB</span>
+      <span onclick="hizliAi('AVAX')" style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--red);cursor:pointer">AVAX</span>
+      <span onclick="hizliAi('LINK')" style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--t2);cursor:pointer">LINK</span>
+      <span onclick="hizliAi('DOGE')" style="padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--yellow);cursor:pointer">DOGE</span>
+    </div>
+
+    <!-- Analiz sonuc kutusu -->
+    <div id="ai-result" style="display:none;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+
+      <!-- Baslik bar -->
+      <div id="ai-header" style="padding:10px 12px;background:var(--bg2);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span id="ai-coin-name" style="font-size:14px;font-weight:700;color:var(--t1)"></span>
+          <span id="ai-tf-label" style="font-size:10px;color:var(--t3);margin-left:6px"></span>
+        </div>
+        <div id="ai-karar-badge" style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700"></div>
+      </div>
+
+      <!-- 5 Katman ozeti -->
+      <div id="ai-katmanlar" style="padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
+
+      <!-- Detayli yorum -->
+      <div style="border-top:1px solid var(--border);padding:10px 12px">
+        <div style="font-size:10px;color:var(--t3);margin-bottom:6px">SISTEM ANALIZI</div>
+        <div id="ai-yorum" style="font-size:11px;color:var(--t2);line-height:1.7"></div>
+      </div>
+
+      <!-- Hedefler -->
+      <div id="ai-hedefler" style="border-top:1px solid var(--border);padding:10px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div>
+
+      <!-- Uyari -->
+      <div style="border-top:1px solid var(--border);padding:8px 12px;background:var(--bg2)">
+        <div style="font-size:9px;color:var(--t3);text-align:center">⚠️ Bu analiz yatırım tavsiyesi değildir. SRU v4 teknik göstergelerine dayanır. Her zaman kendi araştırmanızı yapın.</div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="ai-loading" style="display:none;text-align:center;padding:30px">
+      <div style="font-size:20px;margin-bottom:8px">🤖</div>
+      <div style="font-size:11px;color:var(--t3)">SRU v4 sistemi analiz ediyor...</div>
+      <div style="width:100%;height:2px;background:var(--bg2);border-radius:2px;margin-top:12px;overflow:hidden">
+        <div id="ai-progress" style="height:100%;background:var(--cyan);border-radius:2px;animation:aiLoad 2s linear infinite"></div>
+      </div>
+    </div>
+
+    <!-- Gecmis analizler -->
+    <div id="ai-history" style="margin-top:12px"></div>
+  </div>
+</div>
+
 <div class="tc" id="tc-bist">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
     <button class="scan-btn" id="bist-scan-btn" onclick="bistScan()">📈 BIST TARA</button>
@@ -1060,6 +1162,41 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
     <div class="bist-filter-btn" onclick="bistFilter(this,'gir')" data-bf="gir">✅ GİR</div>
     <div class="bist-filter-btn" onclick="bistFilter(this,'kurum')" data-bf="kurum">🏦 Kurum</div>
     <div class="bist-filter-btn" onclick="bistFilter(this,'hazir')" data-bf="hazir">⚡ Hazır</div>
+  </div>
+
+  <!-- BIST AI Analiz kutusu -->
+  <div id="bist-ai-box" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+    <div id="bist-ai-header" style="padding:10px 12px;background:var(--bg2);display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <span id="bist-ai-sembol" style="font-size:14px;font-weight:700;color:var(--t1)"></span>
+        <span style="font-size:10px;color:var(--t3);margin-left:6px">BIST — SRU v4 Analizi</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div id="bist-ai-karar" style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700"></div>
+        <span onclick="document.getElementById('bist-ai-box').style.display='none'" style="cursor:pointer;color:var(--t3);font-size:16px">✕</span>
+      </div>
+    </div>
+    <!-- Katmanlar -->
+    <div id="bist-ai-katmanlar" style="padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
+    <!-- Yorum -->
+    <div style="border-top:1px solid var(--border);padding:10px 12px">
+      <div style="font-size:10px;color:var(--t3);margin-bottom:6px">SRU v4 SİSTEM ANALİZİ</div>
+      <div id="bist-ai-yorum" style="font-size:11px;color:var(--t2);line-height:1.7"></div>
+    </div>
+    <!-- Hedefler -->
+    <div id="bist-ai-hedefler" style="border-top:1px solid var(--border);padding:10px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div>
+    <div style="border-top:1px solid var(--border);padding:8px 12px;background:var(--bg2)">
+      <div style="font-size:9px;color:var(--t3);text-align:center">⚠️ Yatırım tavsiyesi değildir. BIST seans saatleri: 09:00-18:00 TRST</div>
+    </div>
+  </div>
+
+  <!-- BIST AI Loading -->
+  <div id="bist-ai-loading" style="display:none;text-align:center;padding:20px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px">
+    <div style="font-size:18px;margin-bottom:6px">🤖</div>
+    <div style="font-size:11px;color:var(--t3)">BIST hissesi SRU v4 ile analiz ediliyor...</div>
+    <div style="width:100%;height:2px;background:var(--bg2);border-radius:2px;margin-top:10px;overflow:hidden">
+      <div style="height:100%;background:var(--orange);border-radius:2px;animation:aiLoad 2s linear infinite"></div>
+    </div>
   </div>
   <div id="bist-grid">
     <div class="empty"><div class="empi">📈</div><div class="empt">BIST TARA butonuna bas — BIST 100 hisseleri analiz edilir</div></div>
@@ -2075,6 +2212,7 @@ function renderBist() {
         '<span class="bist-tp bist-tp3">TP3 ' + (c.tp3 > 0 ? c.tp3.toFixed(2) : '—') + '</span>' +
         '<span class="bist-tp bist-sl">SL ' + (c.sl > 0 ? c.sl.toFixed(2) : '—') + '</span>' +
       '</div>' +
+      '<button onclick="bistAiAnaliz(\'' + c.sym + '\')" style="width:100%;padding:6px;margin-top:0;background:rgba(14,116,144,0.12);border:none;border-top:1px solid var(--border);color:var(--cyan);font-size:10px;font-weight:600;cursor:pointer">🤖 AI ile Analiz Et</button>' +
     '</div>';
   }).join('');
 }
@@ -2189,6 +2327,384 @@ async function bistScan() {
   btn.disabled = false;
   btn.textContent = 'BIST TARA';
 }
+
+
+
+// ═══ AI ANALİZ SİSTEMİ ═══
+function hizliAi(sym) {
+  document.getElementById('ai-symbol').value = sym;
+  aiAnaliz();
+}
+
+async function aiAnaliz() {
+  const sym    = (document.getElementById('ai-symbol').value || '').trim().toUpperCase();
+  const tf     = document.getElementById('ai-tf').value;
+  if (!sym) { alert('Lütfen sembol girin (örn: BTC, ETH)'); return; }
+
+  document.getElementById('ai-result').style.display  = 'none';
+  document.getElementById('ai-loading').style.display = 'block';
+  document.getElementById('ai-btn').disabled = true;
+  document.getElementById('ai-btn').textContent = '...';
+
+  const prompt = `Sen SRU v4 kripto spot trading sistemi analistisin.
+
+Analiz edilecek: ${sym}USDT — Zaman dilimi: ${tf}
+
+SRU v4 sistemi 5 katmandan oluşur:
+1. TREND: Hull MA + EMA50/200 + Multi-TF hizalama (0-30 puan)
+2. MOMENTUM: Squeeze + MACD + RSI (0-30 puan)
+3. AKIŞ: Z-Score Delta + Hacim + OBV (0-25 puan)
+4. VOLATİLİTE: BB Sıkışma + VWAP (0-15 puan)
+5. ZAMAN: TF hizalama bonusu (0-5 puan)
+
+Güncel ${sym} bilgilerini kullanarak SRU v4 sistemi mantığıyla detaylı analiz yap.
+
+SADECE JSON formatında yanıtla (başka metin yazma):
+{
+  "sembol": "${sym}",
+  "zaman_dilimi": "${tf}",
+  "guncel_fiyat": "fiyat bilgisi",
+  "karar": "AL *** / AL ** / AL * / HAZIRLAN / BEKLE / PAS / SAT",
+  "karar_rengi": "yesil / sari / turuncu / kirmizi / mor",
+  "kompozit_skor": 0-100 arası sayı,
+  "katmanlar": [
+    {"isim": "TREND", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi"},
+    {"isim": "MOMENTUM", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi/mor/turuncu"},
+    {"isim": "AKIS", "durum": "metin", "puan": 0-25, "renk": "yesil/sari/kirmizi/turuncu"},
+    {"isim": "VOLATİLİTE", "durum": "metin", "puan": 0-15, "renk": "yesil/sari/kirmizi/mor"},
+    {"isim": "ZAMAN/TF", "durum": "metin", "puan": 0-5, "renk": "yesil/sari/kirmizi"}
+  ],
+  "sistem_yorumu": "Tüm katmanları birleştiren 3-4 cümlelik detaylı analiz. Neden bu karar verildi? Hangi riskler var? Ne zaman girilmeli?",
+  "hedefler": {
+    "tp1": "+X.X%",
+    "tp2": "+X.X%",
+    "sl": "-X.X%",
+    "not": "kısa not"
+  },
+  "uyarilar": ["varsa önemli uyarılar listesi"],
+  "uclu_senkron": {
+    "overlay": "Overlay durumu özeti",
+    "panel": "Panel durumu özeti",
+    "genel": "3 sistem birlikte ne diyor"
+  }
+}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await resp.json();
+    const txt  = (data.content || [])
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('');
+
+    let jsonStr = txt.replace(/```json|```/g, '').trim();
+    const m = jsonStr.match(/\{[\s\S]*\}/);
+    if (m) jsonStr = m[0];
+    const analiz = JSON.parse(jsonStr);
+
+    renderAiAnaliz(analiz, sym, tf);
+    kaydedAiHistory(analiz, sym, tf);
+
+  } catch (e) {
+    document.getElementById('ai-loading').style.display = 'none';
+    document.getElementById('ai-btn').disabled = false;
+    document.getElementById('ai-btn').textContent = 'ANALİZ ET';
+    document.getElementById('ai-result').style.display = 'block';
+    document.getElementById('ai-result').innerHTML =
+      '<div style="padding:16px;color:var(--red);font-size:12px">⚠️ Analiz hatası: ' + e.message + '</div>';
+  }
+}
+
+function renderAiAnaliz(a, sym, tf) {
+  document.getElementById('ai-loading').style.display = 'none';
+  document.getElementById('ai-btn').disabled = false;
+  document.getElementById('ai-btn').textContent = 'ANALİZ ET';
+
+  const renkMap = {
+    yesil: { bg: 'rgba(34,197,94,0.12)', border: 'var(--green)', text: 'var(--green)' },
+    kirmizi: { bg: 'rgba(239,68,68,0.12)', border: 'var(--red)', text: 'var(--red)' },
+    sari: { bg: 'rgba(234,179,8,0.12)', border: 'var(--yellow)', text: 'var(--yellow)' },
+    turuncu: { bg: 'rgba(249,115,22,0.12)', border: 'var(--orange)', text: 'var(--orange)' },
+    mor: { bg: 'rgba(168,85,247,0.12)', border: 'var(--purple)', text: 'var(--purple)' }
+  };
+
+  const kr  = renkMap[a.karar_rengi] || renkMap['sari'];
+
+  // Baslik
+  document.getElementById('ai-coin-name').textContent  = sym + 'USDT';
+  document.getElementById('ai-tf-label').textContent   = tf + ' | ' + (a.guncel_fiyat || '');
+  const badge = document.getElementById('ai-karar-badge');
+  badge.textContent         = a.karar || 'BEKLE';
+  badge.style.background    = kr.bg;
+  badge.style.border        = '1px solid ' + kr.border;
+  badge.style.color         = kr.text;
+
+  // Header arka plan
+  document.getElementById('ai-header').style.borderBottom = '2px solid ' + kr.border;
+
+  // Katmanlar
+  const katDiv = document.getElementById('ai-katmanlar');
+  katDiv.innerHTML = '';
+  (a.katmanlar || []).forEach(k => {
+    const r = renkMap[k.renk] || renkMap['sari'];
+    katDiv.innerHTML += `
+      <div class="katman-item ${k.renk}" style="border-left-color:${r.border}">
+        <div style="font-size:9px;color:var(--t3);font-weight:700">${k.isim}</div>
+        <div style="font-size:10px;color:${r.text};margin:2px 0;font-weight:600">${k.durum}</div>
+        <div style="font-size:9px;color:var(--t3)">${k.puan} puan</div>
+      </div>`;
+  });
+
+  // Skor
+  const skor = a.kompozit_skor || 0;
+  const skorRenk = skor >= 78 ? 'var(--green)' : skor >= 60 ? 'var(--yellow)' : skor >= 40 ? 'var(--orange)' : 'var(--red)';
+  katDiv.innerHTML += `
+    <div style="grid-column:1/-1;padding:8px;background:var(--bg2);border-radius:5px;text-align:center">
+      <div style="font-size:10px;color:var(--t3);margin-bottom:4px">KOMPOZİT SKOR</div>
+      <div style="font-size:22px;font-weight:700;color:${skorRenk}">${skor}<span style="font-size:12px;color:var(--t3)">/100</span></div>
+      <div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+        <div style="height:100%;width:${skor}%;background:${skorRenk};border-radius:2px;transition:width 0.8s"></div>
+      </div>
+    </div>`;
+
+  // Yorum
+  document.getElementById('ai-yorum').innerHTML =
+    (a.sistem_yorumu || '').replace(/
+/g, '<br>');
+
+  // Uclu senkron
+  if (a.uclu_senkron) {
+    document.getElementById('ai-yorum').innerHTML +=
+      `<div style="margin-top:10px;padding:8px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--cyan)">
+        <div style="font-size:10px;color:var(--cyan);font-weight:700;margin-bottom:4px">ÜÇLÜ SENKRON</div>
+        <div style="font-size:10px;color:var(--t2);line-height:1.7">
+          🔲 <b>Overlay:</b> ${a.uclu_senkron.overlay}<br>
+          📊 <b>Panel:</b> ${a.uclu_senkron.panel}<br>
+          🎯 <b>Genel:</b> ${a.uclu_senkron.genel}
+        </div>
+      </div>`;
+  }
+
+  // Uyarilar
+  if (a.uyarilar && a.uyarilar.length > 0) {
+    document.getElementById('ai-yorum').innerHTML +=
+      `<div style="margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border-radius:6px;border-left:3px solid var(--red)">
+        <div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ UYARILAR</div>
+        ${a.uyarilar.map(u => `<div style="font-size:10px;color:var(--t2)">• ${u}</div>`).join('')}
+      </div>`;
+  }
+
+  // Hedefler
+  const hDiv = document.getElementById('ai-hedefler');
+  const h = a.hedefler || {};
+  hDiv.innerHTML = `
+    <div class="hedef-box">
+      <div style="font-size:9px;color:var(--t3)">TP1</div>
+      <div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp1||'-'}</div>
+    </div>
+    <div class="hedef-box">
+      <div style="font-size:9px;color:var(--t3)">TP2</div>
+      <div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp2||'-'}</div>
+    </div>
+    <div class="hedef-box">
+      <div style="font-size:9px;color:var(--t3)">STOP</div>
+      <div style="font-size:13px;font-weight:700;color:var(--red)">${h.sl||'-'}</div>
+    </div>
+    <div class="hedef-box" style="grid-column:1/-1">
+      <div style="font-size:9px;color:var(--t3)">${h.not||''}</div>
+    </div>`;
+
+  document.getElementById('ai-result').style.display = 'block';
+}
+
+function kaydedAiHistory(analiz, sym, tf) {
+  const hist = document.getElementById('ai-history');
+  const kr = { yesil:'var(--green)', kirmizi:'var(--red)', sari:'var(--yellow)', turuncu:'var(--orange)', mor:'var(--purple)' };
+  const renk = kr[analiz.karar_rengi] || 'var(--t3)';
+  const item = document.createElement('div');
+  item.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg2);border-radius:5px;margin-bottom:4px;cursor:pointer;border-left:3px solid ' + renk;
+  item.innerHTML = `
+    <span style="font-size:11px;font-weight:600;color:var(--t1)">${sym} <span style="color:var(--t3);font-size:10px">${tf}</span></span>
+    <span style="font-size:11px;font-weight:700;color:${renk}">${analiz.karar}</span>
+    <span style="font-size:10px;color:var(--t3)">${new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span>`;
+  hist.insertBefore(item, hist.firstChild);
+  // Max 5 gecmis
+  while (hist.children.length > 5) hist.removeChild(hist.lastChild);
+}
+
+// ═══ BIST AI ANALİZ ═══
+async function bistAiAnaliz(sembol) {
+  document.getElementById('bist-ai-box').style.display = 'none';
+  document.getElementById('bist-ai-loading').style.display = 'block';
+  document.getElementById('bist-ai-sembol').textContent = sembol + '.IS';
+
+  const prompt = `Sen SRU v4 BIST spot trading sistemi analistisin.
+
+Analiz edilecek: ${sembol} (Borsa İstanbul - BIST)
+
+SRU v4 sistemi BIST için özel parametrelerle çalışır:
+- EMA: 50 periyot (kripto 55 yerine)
+- RSI: 35-68 arası (kripto 40-68 yerine)
+- Hacim eşiği: 1.5x ortalama
+- ADX minimum: 18
+- Seans: 09:00-18:00 TRST
+- Devre kesici: %10 limit
+- Kurumsal hacim: 3x+ = büyük oyuncu
+
+5 katman değerlendirmesi:
+1. TREND: Hull MA + EMA50/200 + Günlük TF hizalama
+2. MOMENTUM: Squeeze + MACD + RSI (35-68)
+3. AKIŞ: Kurumsal hacim tespiti + OBV
+4. VOLATİLİTE: BB sıkışma + VWAP
+5. ZAMAN: Seans içi mi? Bilanço dönemi mi?
+
+SADECE JSON formatında yanıtla:
+{
+  "sembol": "${sembol}",
+  "borsa": "BIST",
+  "guncel_fiyat": "fiyat TL",
+  "karar": "AL *** / AL ** / AL * / HAZIRLAN / BEKLE / PAS / SAT",
+  "karar_rengi": "yesil / sari / turuncu / kirmizi / mor",
+  "kompozit_skor": 0-100,
+  "katmanlar": [
+    {"isim": "TREND", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi"},
+    {"isim": "MOMENTUM", "durum": "metin", "puan": 0-30, "renk": "yesil/sari/kirmizi/mor/turuncu"},
+    {"isim": "AKIS/HACIM", "durum": "metin", "puan": 0-25, "renk": "yesil/sari/kirmizi/turuncu"},
+    {"isim": "VOLATILITE", "durum": "metin", "puan": 0-15, "renk": "yesil/sari/kirmizi/mor"},
+    {"isim": "BIST OZEL", "durum": "metin", "puan": 0-5, "renk": "yesil/sari/kirmizi"}
+  ],
+  "sistem_yorumu": "BIST'e özgü 3-4 cümle: trend, hacim, seans durumu, risk faktörleri. Bilanço dönemi/KAP haberi varsa belirt.",
+  "hedefler": {
+    "tp1": "+X.X%",
+    "tp2": "+X.X%",
+    "sl": "-X.X%",
+    "not": "BIST özel not (devre kesici, lot büyüklüğü vb)"
+  },
+  "uyarilar": ["BIST'e özgü uyarılar: likidite, bilanço, devre kesici vb"],
+  "bist_ozel": {
+    "sektor": "sektör adı",
+    "piyasa_degeri": "büyük/orta/küçük",
+    "likidite": "yüksek/orta/düşük",
+    "endeks": "BIST100/BIST50/BIST30"
+  }
+}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await resp.json();
+    const txt  = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    let jsonStr = txt.replace(/```json|```/g, '').trim();
+    const m = jsonStr.match(/\{[\s\S]*\}/);
+    if (m) jsonStr = m[0];
+    const analiz = JSON.parse(jsonStr);
+    renderBistAi(analiz, sembol);
+  } catch(e) {
+    document.getElementById('bist-ai-loading').style.display = 'none';
+    document.getElementById('bist-ai-box').style.display = 'block';
+    document.getElementById('bist-ai-yorum').innerHTML = '<span style="color:var(--red)">Analiz hatasi: ' + e.message + '</span>';
+  }
+}
+
+function renderBistAi(a, sembol) {
+  document.getElementById('bist-ai-loading').style.display = 'none';
+
+  const renkMap = {
+    yesil:   { bg: 'rgba(34,197,94,0.12)',  border: 'var(--green)',  text: 'var(--green)' },
+    kirmizi: { bg: 'rgba(239,68,68,0.12)',  border: 'var(--red)',    text: 'var(--red)' },
+    sari:    { bg: 'rgba(234,179,8,0.12)',  border: 'var(--yellow)', text: 'var(--yellow)' },
+    turuncu: { bg: 'rgba(249,115,22,0.12)', border: 'var(--orange)', text: 'var(--orange)' },
+    mor:     { bg: 'rgba(168,85,247,0.12)', border: 'var(--purple)', text: 'var(--purple)' }
+  };
+
+  const kr = renkMap[a.karar_rengi] || renkMap['sari'];
+
+  // Karar badge
+  const badge = document.getElementById('bist-ai-karar');
+  badge.textContent = a.karar || 'BEKLE';
+  badge.style.background = kr.bg;
+  badge.style.border = '1px solid ' + kr.border;
+  badge.style.color = kr.text;
+  document.getElementById('bist-ai-header').style.borderBottom = '2px solid ' + kr.border;
+
+  // Katmanlar
+  const katDiv = document.getElementById('bist-ai-katmanlar');
+  katDiv.innerHTML = '';
+  (a.katmanlar || []).forEach(k => {
+    const r = renkMap[k.renk] || renkMap['sari'];
+    katDiv.innerHTML += `<div class="katman-item ${k.renk}" style="border-left-color:${r.border}">
+      <div style="font-size:9px;color:var(--t3);font-weight:700">${k.isim}</div>
+      <div style="font-size:10px;color:${r.text};margin:2px 0;font-weight:600">${k.durum}</div>
+      <div style="font-size:9px;color:var(--t3)">${k.puan} puan</div>
+    </div>`;
+  });
+
+  // Skor
+  const skor = a.kompozit_skor || 0;
+  const skorRenk = skor >= 78 ? 'var(--green)' : skor >= 60 ? 'var(--yellow)' : skor >= 40 ? 'var(--orange)' : 'var(--red)';
+  katDiv.innerHTML += `<div style="grid-column:1/-1;padding:8px;background:var(--bg2);border-radius:5px;text-align:center">
+    <div style="font-size:10px;color:var(--t3);margin-bottom:4px">SKOR</div>
+    <div style="font-size:22px;font-weight:700;color:${skorRenk}">${skor}<span style="font-size:12px;color:var(--t3)">/100</span></div>
+    <div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+      <div style="height:100%;width:${skor}%;background:${skorRenk};border-radius:2px;transition:width 0.8s"></div>
+    </div>
+  </div>`;
+
+  // BIST ozel bilgi
+  if (a.bist_ozel) {
+    const bo = a.bist_ozel;
+    katDiv.innerHTML += `<div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap">
+      ${bo.sektor ? '<span style="padding:3px 8px;background:var(--bg2);border-radius:4px;font-size:10px;color:var(--cyan)">' + bo.sektor + '</span>' : ''}
+      ${bo.endeks ? '<span style="padding:3px 8px;background:var(--bg2);border-radius:4px;font-size:10px;color:var(--orange)">' + bo.endeks + '</span>' : ''}
+      ${bo.likidite ? '<span style="padding:3px 8px;background:var(--bg2);border-radius:4px;font-size:10px;color:var(--t2)">Likidite: ' + bo.likidite + '</span>' : ''}
+    </div>`;
+  }
+
+  // Yorum
+  let yorumHtml = (a.sistem_yorumu || '').replace(/\n/g, '<br>');
+
+  // Uyarilar
+  if (a.uyarilar && a.uyarilar.length > 0) {
+    yorumHtml += `<div style="margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border-radius:6px;border-left:3px solid var(--red)">
+      <div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:4px">⚠️ BIST UYARILARI</div>
+      ${a.uyarilar.map(u => '<div style="font-size:10px;color:var(--t2)">• ' + u + '</div>').join('')}
+    </div>`;
+  }
+  document.getElementById('bist-ai-yorum').innerHTML = yorumHtml;
+
+  // Hedefler
+  const h = a.hedefler || {};
+  document.getElementById('bist-ai-hedefler').innerHTML = `
+    <div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP1</div><div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp1||'-'}</div></div>
+    <div class="hedef-box"><div style="font-size:9px;color:var(--t3)">TP2</div><div style="font-size:13px;font-weight:700;color:var(--green)">${h.tp2||'-'}</div></div>
+    <div class="hedef-box"><div style="font-size:9px;color:var(--t3)">STOP</div><div style="font-size:13px;font-weight:700;color:var(--red)">${h.sl||'-'}</div></div>
+    <div class="hedef-box" style="grid-column:span 1"><div style="font-size:9px;color:var(--t3)">${h.not||''}</div></div>`;
+
+  document.getElementById('bist-ai-box').style.display = 'block';
+  document.getElementById('bist-ai-box').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+// ═══ BIST AI SONU ═══
+
+// ═══ AI ANALİZ SONU ═══
 
 </script>
 </body>
