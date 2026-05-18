@@ -1359,21 +1359,35 @@ function getNextHot(){
   return hot[0];
 }
 function updateClock(){
-  const{h,m}=getTR();
-  const ts=pad(h)+':'+pad(m);
-  document.getElementById('bClock').textContent=ts;
-  document.getElementById('trPill').textContent='TR '+ts;
-  const cur=getCurWin();
-  document.getElementById('bWin').textContent=cur.n;
-  const pill=document.getElementById('bPill');
-  pill.textContent=cur.sc>=8?'🔥 Sıcak':cur.sc>=6?'⚡ Aktif':'😴 Sakin';
-  pill.className='wpill '+cur.tag;
-  document.getElementById('trPill').className='tr-pill '+cur.tag;
-  const nx=getNextHot();
-  document.getElementById('bNext').textContent=pad(nx.s)+':00 '+nx.n;
+  try {
+    const {h,m} = getTR();
+    const ts = pad(h)+':'+pad(m);
+    const cur = getCurWin();
+    const nx  = getNextHot();
+    const el = {
+      bClock: document.getElementById('bClock'),
+      trPill: document.getElementById('trPill'),
+      bWin:   document.getElementById('bWin'),
+      bPill:  document.getElementById('bPill'),
+      bNext:  document.getElementById('bNext'),
+    };
+    if(el.bClock) el.bClock.textContent = ts;
+    if(el.trPill){ el.trPill.textContent = 'TR '+ts; el.trPill.className = 'tr-pill '+cur.tag; }
+    if(el.bWin)  el.bWin.textContent  = cur.n;
+    if(el.bPill){ el.bPill.textContent = cur.sc>=8?'🔥 Sicak':cur.sc>=6?'⚡ Aktif':'😴 Sakin'; el.bPill.className='wpill '+cur.tag; }
+    if(el.bNext) el.bNext.textContent = pad(nx.s)+':00 '+nx.n;
+  } catch(e) { console.warn('clock err:', e); }
 }
-setInterval(updateClock,1000);
-updateClock();
+// Saat - DOMContentLoaded ile guvenceli baslat
+document.addEventListener('DOMContentLoaded', function() {
+  updateClock();
+  setInterval(updateClock, 1000);
+});
+// Sayfa zaten yuklenmisse hemen baslat
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  updateClock();
+  setInterval(updateClock, 1000);
+}
 
 // ══════════════════════════════════════
 // TR PENCERELER
@@ -1396,8 +1410,14 @@ function renderWindows(){
     </div>`;
   }).join('');
 }
-renderWindows();
-setInterval(renderWindows,60000);
+// Pencereler - DOMContentLoaded ile guvenceli baslat
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.getElementById('wgrid')) renderWindows();
+  setInterval(function(){ if(document.getElementById('wgrid')) renderWindows(); }, 60000);
+});
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  if (document.getElementById('wgrid')) renderWindows();
+}
 
 // ══════════════════════════════════════
 // API FETCH — PROXY ZİNCİRİ
